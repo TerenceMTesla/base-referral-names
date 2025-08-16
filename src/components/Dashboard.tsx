@@ -9,6 +9,7 @@ import { RewardsPanel } from '@/components/RewardsPanel';
 import { ReferralSharePanel } from '@/components/ReferralSharePanel';
 import { SubnameMinting } from '@/components/SubnameMinting';
 import { ReferralAnalytics } from '@/components/ReferralAnalytics';
+import { ReferralProcessor } from '@/components/ReferralProcessor';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -142,6 +143,7 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-8">
+      <ReferralProcessor />
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">Referral Dashboard</h1>

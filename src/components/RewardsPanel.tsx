@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSmartContract } from '@/hooks/useSmartContract';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useReferralValidation } from '@/hooks/useReferralValidation';
 
 interface RewardMilestone {
   referrals: number;
@@ -21,6 +22,7 @@ export const RewardsPanel = () => {
   const { profile } = useAuth();
   const { connectToBase, mintSubnameNFT, checkWalletConnection, loading } = useSmartContract();
   const { toast } = useToast();
+  const { stats, fetchReferralStats } = useReferralValidation();
   const [verifiedReferrals, setVerifiedReferrals] = useState(0);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [pendingRewards, setPendingRewards] = useState<any[]>([]);
@@ -66,9 +68,10 @@ export const RewardsPanel = () => {
   useEffect(() => {
     if (profile) {
       fetchReferralData();
+      fetchReferralStats();
       checkWallet();
     }
-  }, [profile]);
+  }, [profile, fetchReferralStats]);
 
   const fetchReferralData = async () => {
     if (!profile) return;
