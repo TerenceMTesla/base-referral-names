@@ -21,20 +21,20 @@ export const DemoDashboard = () => {
   };
 
   const mockReferrals = [
-    { id: '1', referral_code: 'DEMO-REF-12345', referred_email: 'user1@example.com', status: 'verified', created_at: '2024-01-15' },
-    { id: '2', referral_code: 'DEMO-REF-12345', referred_email: 'user2@example.com', status: 'verified', created_at: '2024-01-14' },
-    { id: '3', referral_code: 'DEMO-REF-12345', referred_email: 'user3@example.com', status: 'pending', created_at: '2024-01-13' },
+    { id: '1', referral_code: 'DEMO-REF-12345', referred_email: 'user1@ezverse.com', status: 'verified', created_at: '2024-01-15' },
+    { id: '2', referral_code: 'DEMO-REF-12345', referred_email: 'user2@ezverse.com', status: 'verified', created_at: '2024-01-14' },
+    { id: '3', referral_code: 'DEMO-REF-12345', referred_email: 'user3@ezverse.com', status: 'pending', created_at: '2024-01-13' },
   ];
 
   const mockSubnames = [
-    { id: '1', subname: 'rewards.example.eth', referral_count: 10, nft_token_id: '1001', created_at: '2024-01-10' },
-    { id: '2', subname: 'bonus.example.eth', referral_count: 8, nft_token_id: '1002', created_at: '2024-01-12' },
+    { id: '1', subname: 'rewards.ezverse.eth', referral_count: 10, nft_token_id: '1001', created_at: '2024-01-10' },
+    { id: '2', subname: 'bonus.ezverse.eth', referral_count: 8, nft_token_id: '1002', created_at: '2024-01-12' },
   ];
 
   const mockLeaderboard = [
-    { user_id: '1', display_name: 'DemoUser', email: 'demo@example.com', total_referrals: 24, verified_referrals: 18, subnames_earned: 2, rank: 1 },
-    { user_id: '2', display_name: 'TopReferrer', email: 'top@example.com', total_referrals: 45, verified_referrals: 32, subnames_earned: 4, rank: 2 },
-    { user_id: '3', display_name: 'ActiveUser', email: 'active@example.com', total_referrals: 38, verified_referrals: 28, subnames_earned: 3, rank: 3 },
+    { user_id: '1', display_name: 'DemoUser', email: 'demo@ezverse.com', total_referrals: 24, verified_referrals: 18, subnames_earned: 2, rank: 1 },
+    { user_id: '2', display_name: 'TopReferrer', email: 'top@ezverse.com', total_referrals: 45, verified_referrals: 32, subnames_earned: 4, rank: 2 },
+    { user_id: '3', display_name: 'ActiveUser', email: 'active@ezverse.com', total_referrals: 38, verified_referrals: 28, subnames_earned: 3, rank: 3 },
   ];
 
   const copyReferralCode = () => {
@@ -57,10 +57,10 @@ export const DemoDashboard = () => {
       <div className="text-center space-y-4 animate-fade-in">
         <div className="flex items-center justify-center gap-3">
           <ENSLogo size="lg" className="animate-bounce-gentle" />
-          <h1 className="text-5xl font-bold text-gradient">ENS Referral Hub</h1>
+          <h1 className="text-5xl font-bold text-gradient">EZVERSE Referral Hub</h1>
         </div>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Explore the referral system with sample data and experience the power of decentralized naming
+          Explore EZVERSE referral system with sample data and experience the power of ENS subname rewards
         </p>
         <Badge variant="secondary" className="text-sm animate-pulse-slow bg-primary/10 text-primary border-primary/20">
           Demo Mode - Sample Data
@@ -135,9 +135,9 @@ export const DemoDashboard = () => {
         <TabsContent value="share" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Share Your Referral Link</CardTitle>
+              <CardTitle>Share Your EZVERSE Referral Link</CardTitle>
               <CardDescription>
-                Share this link with friends to earn rewards when they sign up
+                Share this link with friends to earn ENS subname NFT rewards when they join EZVERSE
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -156,9 +156,9 @@ export const DemoDashboard = () => {
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground">
-                  <strong>How it works:</strong> When someone signs up using your link, 
-                  you'll earn points towards NFT rewards. Every 10 verified referrals 
-                  unlocks a new ENS subname NFT!
+                  <strong>How it works:</strong> When someone joins EZVERSE using your link, 
+                  you'll earn progress towards exclusive ENS subname NFT rewards. Every 10 verified referrals 
+                  unlocks a new collectible ENS subname NFT on EZVERSE!
                 </p>
               </div>
             </CardContent>

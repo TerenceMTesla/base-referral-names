@@ -135,11 +135,11 @@ export const useReferralGeneration = () => {
   const shareToSocial = (platform: 'twitter' | 'telegram' | 'whatsapp') => {
     if (!referralLink) return;
 
-    const message = `Join me on this amazing referral rewards platform! Use my link to get started: ${referralLink}`;
+    const message = `Join me on EZVERSE and earn exclusive ENS subname NFTs! Use my link to get started: ${referralLink}`;
     
     const urls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('Join me on this amazing referral rewards platform!')}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('Join me on EZVERSE and earn exclusive ENS subname NFTs!')}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(message)}`
     };
 
