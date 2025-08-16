@@ -33,9 +33,12 @@ export const useAuth = () => {
         body: { dynamicUser }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
       
-      if (data.success && data.session_url) {
+      if (data?.success && data?.session_url) {
         // Use the session URL to establish Supabase session
         const url = new URL(data.session_url);
         const accessToken = url.searchParams.get('access_token');
@@ -47,30 +50,42 @@ export const useAuth = () => {
             refresh_token: refreshToken
           });
           
-          if (sessionError) throw sessionError;
+          if (sessionError) {
+            console.error('Session error:', sessionError);
+            throw sessionError;
+          }
           
           setSession(sessionData.session);
           
           // Fetch the profile
           if (sessionData.user) {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('dynamic_user_id', dynamicUser.userId)
-              .single();
-              
-            if (profileData) {
-              setProfile(profileData);
-              await processReferralSignup(profileData);
-            }
+            setTimeout(async () => {
+              try {
+                const { data: profileData } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('dynamic_user_id', dynamicUser.userId)
+                  .single();
+                  
+                if (profileData) {
+                  setProfile(profileData);
+                  await processReferralSignup(profileData);
+                }
+              } catch (profileError) {
+                console.error('Error fetching profile:', profileError);
+              }
+            }, 100);
           }
         }
+      } else {
+        console.error('Invalid response from dynamic-auth function:', data);
+        throw new Error('Invalid authentication response');
       }
     } catch (error: any) {
       console.error('Error authenticating with Dynamic:', error);
       toast({
         title: "Authentication Error",
-        description: "Failed to authenticate. Please try again.",
+        description: error.message || "Failed to authenticate. Please try again.",
         variant: "destructive",
       });
     }
@@ -102,40 +117,54 @@ export const useAuth = () => {
         if (session?.user && !profile) {
           // Fetch profile when session is established
           setTimeout(async () => {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .single();
-              
-            if (profileData) {
-              setProfile(profileData);
+            try {
+              const { data: profileData } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .single();
+                
+              if (profileData) {
+                setProfile(profileData);
+              }
+            } catch (error) {
+              console.error('Error fetching profile in auth state change:', error);
             }
-          }, 0);
+          }, 100);
         } else if (!session) {
           setProfile(null);
         }
       }
     );
 
-    // Handle Dynamic user authentication
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // Handle Dynamic user authentication separately
     const handleAuthState = async () => {
-      setLoading(true);
-      
-      if (user && !session) {
-        await authenticateWithDynamic(user);
-      } else if (!user) {
+      if (user && !session && !loading) {
+        setLoading(true);
+        try {
+          await authenticateWithDynamic(user);
+        } catch (error) {
+          console.error('Authentication failed:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (!user && session) {
+        // User logged out from Dynamic but still has Supabase session
+        await supabase.auth.signOut();
         setProfile(null);
         setSession(null);
+        setLoading(false);
+      } else if (!user && !session) {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     handleAuthState();
-
-    return () => subscription.unsubscribe();
-  }, [user, session]);
+  }, [user]);
 
   return {
     user,

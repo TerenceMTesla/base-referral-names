@@ -9,6 +9,12 @@ createRoot(document.getElementById("root")!).render(
   <DynamicContextProvider
     settings={{
       environmentId: DYNAMIC_ENVIRONMENT_ID,
+      appLogoUrl: '/favicon.ico',
+      appName: 'ENS Referrals',
+      privacyPolicyUrl: '/privacy',
+      termsOfServiceUrl: '/terms',
+      debugError: true,
+      
     }}
   >
     <App />

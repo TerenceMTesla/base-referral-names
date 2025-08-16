@@ -1,9 +1,15 @@
 import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
+import { ErrorDisplay } from '@/components/ui/error-boundary';
 
 export const DynamicAuth = () => {
   const { user, isAuthenticated, loading } = useAuth();
+
+  // Handle Dynamic SDK initialization errors gracefully
+  const handleRetry = () => {
+    window.location.reload();
+  };
 
   if (loading) {
     return (
@@ -46,7 +52,12 @@ export const DynamicAuth = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-          <DynamicWidget />
+          <div className="min-h-[200px] flex items-center justify-center">
+            <DynamicWidget />
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground text-center">
+          If authentication doesn't load, try refreshing the page
         </div>
       </CardContent>
     </Card>
