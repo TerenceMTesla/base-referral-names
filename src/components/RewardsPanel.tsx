@@ -18,7 +18,11 @@ interface RewardMilestone {
   achieved: boolean;
 }
 
-export const RewardsPanel = () => {
+interface RewardsPanelProps {
+  isDemoMode?: boolean;
+}
+
+export const RewardsPanel = ({ isDemoMode = false }: RewardsPanelProps) => {
   const { profile } = useAuth();
   const { connectToBase, mintSubnameNFT, checkWalletConnection, loading } = useSmartContract();
   const { toast } = useToast();
@@ -66,15 +70,20 @@ export const RewardsPanel = () => {
   ];
 
   useEffect(() => {
-    if (profile) {
+    if (isDemoMode) {
+      // Set demo data
+      setVerifiedReferrals(6);
+      setIsWalletConnected(true);
+      setPendingRewards([]);
+    } else if (profile) {
       fetchReferralData();
       fetchReferralStats();
       checkWallet();
     }
-  }, [profile, fetchReferralStats]);
+  }, [profile, fetchReferralStats, isDemoMode]);
 
   const fetchReferralData = async () => {
-    if (!profile) return;
+    if (!profile || isDemoMode) return;
 
     try {
       // Get verified referrals count

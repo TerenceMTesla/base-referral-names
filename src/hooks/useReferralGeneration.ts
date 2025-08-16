@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
-export const useReferralGeneration = () => {
+export const useReferralGeneration = (isDemoMode = false) => {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -12,13 +12,17 @@ export const useReferralGeneration = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (profile?.id) {
+    if (isDemoMode) {
+      // Set demo data immediately
+      setReferralCode('DEMO123');
+      setReferralLink(`${window.location.origin}/?ref=DEMO123`);
+    } else if (profile?.id) {
       fetchExistingReferralCode();
     }
-  }, [profile?.id]);
+  }, [profile?.id, isDemoMode]);
 
   const fetchExistingReferralCode = async () => {
-    if (!profile?.id) return;
+    if (!profile?.id || isDemoMode) return;
 
     try {
       const { data, error } = await supabase
@@ -42,6 +46,18 @@ export const useReferralGeneration = () => {
   };
 
   const generateReferralCode = async () => {
+    if (isDemoMode) {
+      // Demo mode simulation
+      const demoCode = `DEMO${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      setReferralCode(demoCode);
+      setReferralLink(`${window.location.origin}/?ref=${demoCode}`);
+      toast({
+        title: "Demo: Referral code generated!",
+        description: "Your demo referral link is ready to share.",
+      });
+      return;
+    }
+
     if (!profile?.id) {
       toast({
         title: "Authentication required",

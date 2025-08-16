@@ -9,7 +9,11 @@ import { AnimatedCounter } from './AnimatedCounter';
 import { AchievementBadge } from './AchievementBadge';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
 
-export const ReferralSharePanel = () => {
+interface ReferralSharePanelProps {
+  isDemoMode?: boolean;
+}
+
+export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelProps) => {
   const {
     referralCode,
     referralLink,
@@ -18,7 +22,7 @@ export const ReferralSharePanel = () => {
     copyToClipboard,
     shareToSocial,
     error,
-  } = useReferralGeneration();
+  } = useReferralGeneration(isDemoMode);
   
   const realTimeData = { activeReferrers: 847, nftsMintedToday: 23, liveReferrals: 156 };
 

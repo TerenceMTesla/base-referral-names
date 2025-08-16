@@ -63,7 +63,11 @@ const MINTING_TIERS: MintingTier[] = [
   }
 ];
 
-export const SubnameMinting = () => {
+interface SubnameMintingProps {
+  isDemoMode?: boolean;
+}
+
+export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
   const { profile } = useAuth();
   const { connectToBase, mintSubnameNFT, checkWalletConnection, loading } = useSmartContract();
   const { toast } = useToast();
@@ -77,14 +81,21 @@ export const SubnameMinting = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (profile) {
+    if (isDemoMode) {
+      // Load demo data immediately
+      setVerifiedReferrals(6);
+      setExistingSubnames(['rewards.eth', 'social.eth']);
+      setWalletConnected(true);
+      setLoadingData(false);
+      setSelectedTier(MINTING_TIERS.find(t => t.threshold <= 6) || MINTING_TIERS[0]);
+    } else if (profile) {
       fetchReferralData();
       checkWallet();
     }
-  }, [profile]);
+  }, [profile, isDemoMode]);
 
   const fetchReferralData = async () => {
-    if (!profile) return;
+    if (!profile || isDemoMode) return;
 
     try {
       setLoadingData(true);

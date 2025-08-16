@@ -15,18 +15,34 @@ interface QuickStats {
   progress: number;
 }
 
-export const QuickAnalytics = () => {
+interface QuickAnalyticsProps {
+  isDemoMode?: boolean;
+}
+
+export const QuickAnalytics = ({ isDemoMode = false }: QuickAnalyticsProps) => {
   const { profile } = useAuth();
   const { get, set } = useDashboardCache();
   const [stats, setStats] = useState<QuickStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchQuickStats();
-  }, [profile?.id]);
+    if (isDemoMode) {
+      // Load demo data immediately
+      setStats({
+        userRank: 23,
+        totalUsers: 1000,
+        conversionRate: 75.5,
+        nextMilestone: 10,
+        progress: 60
+      });
+      setLoading(false);
+    } else {
+      fetchQuickStats();
+    }
+  }, [profile?.id, isDemoMode]);
 
   const fetchQuickStats = async () => {
-    if (!profile?.id) return;
+    if (!profile?.id || isDemoMode) return;
 
     const cacheKey = `quick-analytics-${profile.id}`;
     const cached = get<QuickStats>(cacheKey);

@@ -177,7 +177,7 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
             </CardHeader>
             <CardContent className="pt-6">
               <Suspense fallback={<TabLoadingSpinner />}>
-                <LazyReferralSharePanel />
+                <LazyReferralSharePanel isDemoMode={isDemoMode} />
               </Suspense>
             </CardContent>
           </Card>
@@ -221,13 +221,13 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
 
         <TabsContent value="mint" className="animate-fade-in">
           <Suspense fallback={<TabLoadingSpinner />}>
-            <LazySubnameMinting />
+            <LazySubnameMinting isDemoMode={isDemoMode} />
           </Suspense>
         </TabsContent>
 
         <TabsContent value="analytics" className="animate-fade-in">
           <Suspense fallback={<TabLoadingSpinner />}>
-            <QuickAnalytics />
+            <QuickAnalytics isDemoMode={isDemoMode} />
           </Suspense>
         </TabsContent>
 
@@ -282,7 +282,7 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
 
         <TabsContent value="rewards" className="animate-fade-in">
           <Suspense fallback={<TabLoadingSpinner />}>
-            <LazyRewardsPanel />
+            <LazyRewardsPanel isDemoMode={isDemoMode} />
           </Suspense>
         </TabsContent>
       </Tabs>
