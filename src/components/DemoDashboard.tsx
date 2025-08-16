@@ -53,19 +53,19 @@ export const DemoDashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-2 animate-fade-in">
         <h1 className="text-4xl font-bold">Dashboard Demo</h1>
         <p className="text-xl text-muted-foreground">
           Explore the referral system with sample data
         </p>
-        <Badge variant="secondary" className="text-sm">
+        <Badge variant="secondary" className="text-sm animate-pulse-slow">
           Demo Mode - Sample Data
         </Badge>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="card-hover animate-slide-up stagger-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Referrals</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -78,7 +78,7 @@ export const DemoDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-hover animate-slide-up stagger-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Verified Referrals</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -91,7 +91,7 @@ export const DemoDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-hover animate-slide-up stagger-3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rewards Earned</CardTitle>
             <Gift className="h-4 w-4 text-muted-foreground" />
@@ -104,7 +104,7 @@ export const DemoDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-hover animate-slide-up stagger-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">ENS Subnames</CardTitle>
             <Sparkles className="h-4 w-4 text-muted-foreground" />
@@ -145,7 +145,7 @@ export const DemoDashboard = () => {
                     value={`${window.location.origin}?ref=${referralCode}`}
                     readOnly
                   />
-                  <Button onClick={copyReferralCode} size="sm">
+                  <Button onClick={copyReferralCode} size="sm" className="button-glow transition-all duration-300 hover:scale-105">
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
