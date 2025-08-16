@@ -10,6 +10,7 @@ import { ReferralSharePanel } from '@/components/ReferralSharePanel';
 import { SubnameMinting } from '@/components/SubnameMinting';
 import { ReferralAnalytics } from '@/components/ReferralAnalytics';
 import { ReferralProcessor } from '@/components/ReferralProcessor';
+import { SimplifiedDashboard } from '@/components/SimplifiedDashboard';
 import { ErrorDisplay } from '@/components/ui/error-boundary';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
@@ -96,6 +97,7 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [referralCode, setReferralCode] = useState<string>('');
+  const [useSimplified, setUseSimplified] = useState(true); // Default to simplified version
   
   // Use demo data when in demo mode or when authentication fails
   const shouldUseDemoData = isDemoMode || (!isAuthenticated && !authLoading);
@@ -250,9 +252,45 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
     );
   }
 
+  // Show simplified version if enabled and user is authenticated
+  if (useSimplified && isAuthenticated && !shouldUseDemoData) {
+    return (
+      <div className="space-y-6">
+        {!shouldUseDemoData && <ReferralProcessor />}
+        <SimplifiedDashboard />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {!shouldUseDemoData && <ReferralProcessor />}
+      
+      {/* Performance Mode Toggle */}
+      {isAuthenticated && !shouldUseDemoData && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-2">
+              <RefreshCw className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium text-blue-700">
+                  {useSimplified ? 'Fast Mode Active' : 'Full Dashboard Mode'}
+                </p>
+                <p className="text-xs text-blue-600">
+                  {useSimplified ? 'Optimized for speed with essential features' : 'Complete dashboard with all analytics'}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setUseSimplified(!useSimplified)}
+            >
+              Switch to {useSimplified ? 'Full' : 'Fast'} Mode
+            </Button>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Demo Mode Indicator */}
       {shouldUseDemoData && (
