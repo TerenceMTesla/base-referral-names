@@ -8,6 +8,8 @@ import { useSmartContract } from '@/hooks/useSmartContract';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Wallet, Coins, Trophy, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorDisplay } from '@/components/ui/error-boundary';
 
 interface MintingTier {
   threshold: number;
@@ -72,6 +74,7 @@ export const SubnameMinting = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [existingSubnames, setExistingSubnames] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -85,6 +88,7 @@ export const SubnameMinting = () => {
 
     try {
       setLoadingData(true);
+      setError(null);
 
       // Get verified referrals count
       const { data: referralsData, error: referralsError } = await supabase
@@ -107,9 +111,11 @@ export const SubnameMinting = () => {
 
     } catch (error: any) {
       console.error('Error fetching referral data:', error);
+      const errorMessage = error.message || 'Failed to load referral data';
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to load referral data. Please refresh the page.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -198,10 +204,20 @@ export const SubnameMinting = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center p-8">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2">Loading minting data...</span>
+          <LoadingSpinner size="lg" message="Loading minting data..." />
         </CardContent>
       </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorDisplay
+        error={error}
+        onRetry={fetchReferralData}
+        title="Failed to load minting data"
+        description="There was an issue loading your minting information."
+      />
     );
   }
 

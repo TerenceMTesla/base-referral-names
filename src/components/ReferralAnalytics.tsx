@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Trophy, Crown, Medal, Award, TrendingUp, Users, Zap, RefreshCw } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorDisplay } from '@/components/ui/error-boundary';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -34,6 +36,7 @@ export const ReferralAnalytics = () => {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -46,15 +49,18 @@ export const ReferralAnalytics = () => {
 
     try {
       setLoading(true);
+      setError(null);
       await Promise.all([
         fetchLeaderboard(),
         fetchUserStats()
       ]);
     } catch (error: any) {
       console.error('Error fetching analytics:', error);
+      const errorMessage = error.message || 'Failed to load analytics data';
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to load analytics data. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -198,18 +204,23 @@ export const ReferralAnalytics = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-muted rounded w-1/4"></div>
-                <div className="h-8 bg-muted rounded w-1/2"></div>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <Card>
+          <CardContent className="flex items-center justify-center p-8">
+            <LoadingSpinner size="lg" message="Loading analytics data..." />
+          </CardContent>
+        </Card>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorDisplay
+        error={error}
+        onRetry={fetchAnalyticsData}
+        title="Failed to load analytics"
+        description="There was an issue loading your referral analytics."
+      />
     );
   }
 

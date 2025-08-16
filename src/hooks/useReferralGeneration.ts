@@ -9,6 +9,7 @@ export const useReferralGeneration = () => {
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referralLink, setReferralLink] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (profile?.id) {
@@ -36,6 +37,7 @@ export const useReferralGeneration = () => {
       }
     } catch (error) {
       console.error('Error fetching referral code:', error);
+      setError('Failed to load existing referral data');
     }
   };
 
@@ -51,6 +53,7 @@ export const useReferralGeneration = () => {
 
     try {
       setLoading(true);
+      setError(null);
 
       // Check if user already has a pending referral code
       const { data: existingReferral } = await supabase
@@ -99,9 +102,11 @@ export const useReferralGeneration = () => {
 
     } catch (error: any) {
       console.error('Error generating referral code:', error);
+      const errorMessage = error.message || 'Failed to generate referral code. Please try again.';
+      setError(errorMessage);
       toast({
         title: "Generation failed",
-        description: "Failed to generate referral code. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -145,6 +150,7 @@ export const useReferralGeneration = () => {
     referralCode,
     referralLink,
     loading,
+    error,
     generateReferralCode,
     copyToClipboard,
     shareToSocial,

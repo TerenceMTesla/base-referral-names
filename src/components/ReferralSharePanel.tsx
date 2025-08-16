@@ -2,8 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useReferralGeneration } from '@/hooks/useReferralGeneration';
-import { Copy, Share2, MessageCircle, Send, Twitter } from 'lucide-react';
+import { Copy, Share2, MessageCircle, Send, Twitter, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorDisplay } from '@/components/ui/error-boundary';
 
 export const ReferralSharePanel = () => {
   const {
@@ -13,6 +15,7 @@ export const ReferralSharePanel = () => {
     generateReferralCode,
     copyToClipboard,
     shareToSocial,
+    error,
   } = useReferralGeneration();
 
   return (
@@ -27,7 +30,16 @@ export const ReferralSharePanel = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!referralCode ? (
+        {error && (
+          <ErrorDisplay 
+            error={error}
+            onRetry={generateReferralCode}
+            title="Failed to load referral data"
+            description="There was an issue with your referral information."
+          />
+        )}
+        
+        {!error && !referralCode ? (
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">
               Generate your referral code to start inviting friends
@@ -37,10 +49,17 @@ export const ReferralSharePanel = () => {
               disabled={loading}
               className="w-full"
             >
-              {loading ? "Generating..." : "Generate Referral Code"}
+              {loading ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Referral Code"
+              )}
             </Button>
           </div>
-        ) : (
+        ) : !error && referralCode ? (
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Your Referral Code</label>
@@ -113,7 +132,7 @@ export const ReferralSharePanel = () => {
               </ul>
             </div>
           </div>
-        )}
+        ) : null}
       </CardContent>
     </Card>
   );
