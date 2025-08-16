@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Copy, Users, Gift, Award, ExternalLink } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Copy, Users, Gift, Award, ExternalLink, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { RewardsPanel } from '@/components/RewardsPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -201,117 +202,144 @@ export const Dashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Referral Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Generate Referral</CardTitle>
-            <CardDescription>
-              Create a new referral code to share with friends
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button onClick={generateReferralCode} className="w-full">
-              Generate New Referral Code
-            </Button>
-            
-            {referralCode && (
-              <div className="p-4 bg-muted rounded-lg">
-                <div className="flex items-center justify-between">
-                  <code className="text-sm">{window.location.origin}?ref={referralCode}</code>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyReferralCode(referralCode)}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="referrals" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="referrals" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Referrals
+          </TabsTrigger>
+          <TabsTrigger value="rewards" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Rewards
+          </TabsTrigger>
+        </TabsList>
 
-        {/* ENS Subnames */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your ENS Subnames</CardTitle>
-            <CardDescription>
-              NFT subnames you've earned through referrals
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {subnames.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
-                No subnames earned yet. Start referring to earn your first ENS subname!
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {subnames.map((subname) => (
-                  <div key={subname.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{subname.subname}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {subname.referral_count} referrals
-                      </p>
-                    </div>
-                    <Badge variant="secondary">NFT</Badge>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Referrals */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Referrals</CardTitle>
-          <CardDescription>
-            Track the status of your recent referral codes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {referrals.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
-              No referrals yet. Generate your first referral code above!
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {referrals.slice(0, 10).map((referral) => (
-                <div key={referral.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div>
-                      <p className="font-medium">{referral.referral_code}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {referral.referred_email || 'Pending signup'}
-                      </p>
+        <TabsContent value="referrals" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Referral Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Generate Referral</CardTitle>
+                <CardDescription>
+                  Create a new referral code to share with friends
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button onClick={generateReferralCode} className="w-full">
+                  Generate New Referral Code
+                </Button>
+                
+                {referralCode && (
+                  <div className="p-4 bg-muted rounded-lg animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <code className="text-sm">{window.location.origin}?ref={referralCode}</code>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyReferralCode(referralCode)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge 
-                      variant={
-                        referral.status === 'rewarded' ? 'default' :
-                        referral.status === 'verified' ? 'secondary' : 'outline'
-                      }
-                    >
-                      {referral.status}
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyReferralCode(referral.referral_code)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* ENS Subnames */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Your ENS Subnames</CardTitle>
+                <CardDescription>
+                  NFT subnames you've earned through referrals
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {subnames.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">
+                    No subnames earned yet. Start referring to earn your first ENS subname!
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {subnames.map((subname) => (
+                      <div key={subname.id} className="flex items-center justify-between p-3 border rounded-lg hover-scale">
+                        <div>
+                          <p className="font-medium">{subname.subname}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {subname.referral_count} referrals
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary">NFT</Badge>
+                          {subname.nft_token_id && (
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Referrals */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Referrals</CardTitle>
+              <CardDescription>
+                Track the status of your recent referral codes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {referrals.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No referrals yet. Generate your first referral code above!
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {referrals.slice(0, 10).map((referral) => (
+                    <div key={referral.id} className="flex items-center justify-between p-3 border rounded-lg hover-scale">
+                      <div className="flex items-center space-x-4">
+                        <div>
+                          <p className="font-medium">{referral.referral_code}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {referral.referred_email || 'Pending signup'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge 
+                          variant={
+                            referral.status === 'rewarded' ? 'default' :
+                            referral.status === 'verified' ? 'secondary' : 'outline'
+                          }
+                        >
+                          {referral.status}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyReferralCode(referral.referral_code)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rewards">
+          <RewardsPanel />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useReferralTracking } from '@/hooks/useReferralTracking';
 
 export interface UserProfile {
   id: string;
@@ -16,6 +17,7 @@ export interface UserProfile {
 
 export const useAuth = () => {
   const { user } = useDynamicContext();
+  const { processReferralSignup } = useReferralTracking();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -66,6 +68,9 @@ export const useAuth = () => {
 
         if (error) throw error;
         setProfile(data);
+        
+        // Process referral signup for new users
+        await processReferralSignup(data);
       } else {
         // Create new profile
         const { data, error } = await supabase
@@ -76,6 +81,9 @@ export const useAuth = () => {
 
         if (error) throw error;
         setProfile(data);
+        
+        // Process referral signup for new users
+        await processReferralSignup(data);
       }
     } catch (error: any) {
       console.error('Error creating/updating profile:', error);
