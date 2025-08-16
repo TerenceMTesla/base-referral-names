@@ -35,10 +35,10 @@ All colors MUST be HSL.
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    /* Accent - Web3 green for success states */
-    --accent: 142 76% 36%;
+    /* Accent - Blueish purple for interactive elements */
+    --accent: 258 90% 66%;
     --accent-foreground: 0 0% 98%;
-    --accent-light: 142 76% 46%;
+    --accent-light: 258 90% 76%;
 
     /* Warning - Amber for pending states */
     --warning: 38 92% 50%;
@@ -107,10 +107,10 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    /* Accent - Web3 green (adjusted for dark) */
-    --accent: 142 76% 41%;
+    /* Accent - Blueish purple (adjusted for dark) */
+    --accent: 258 90% 71%;
     --accent-foreground: 210 40% 98%;
-    --accent-light: 142 76% 51%;
+    --accent-light: 258 90% 81%;
 
     /* Warning - Amber for pending states */
     --warning: 38 92% 55%;
