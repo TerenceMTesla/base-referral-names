@@ -252,12 +252,12 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
     );
   }
 
-  // Show simplified version if enabled and user is authenticated
-  if (useSimplified && isAuthenticated && !shouldUseDemoData) {
+  // Show simplified version for both authenticated users and demo mode
+  if (useSimplified && (isAuthenticated || shouldUseDemoData)) {
     return (
       <div className="space-y-6">
         {!shouldUseDemoData && <ReferralProcessor />}
-        <SimplifiedDashboard />
+        <SimplifiedDashboard isDemoMode={shouldUseDemoData} />
       </div>
     );
   }

@@ -23,8 +23,12 @@ const TabLoadingSpinner = () => (
   </div>
 );
 
-export const SimplifiedDashboard = () => {
-  const { data, loading, error, refresh } = useOptimizedDashboard();
+interface SimplifiedDashboardProps {
+  isDemoMode?: boolean;
+}
+
+export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardProps) => {
+  const { data, loading, error, refresh } = useOptimizedDashboard(isDemoMode);
   const [activeTab, setActiveTab] = useState('share');
 
   if (loading) {

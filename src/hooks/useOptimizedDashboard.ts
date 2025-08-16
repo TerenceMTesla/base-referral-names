@@ -15,7 +15,7 @@ interface DashboardData {
   };
 }
 
-export const useOptimizedDashboard = () => {
+export const useOptimizedDashboard = (isDemoMode = false) => {
   const { profile } = useAuth();
   const { get, set, invalidatePattern } = useDashboardCache();
   const { toast } = useToast();
@@ -33,8 +33,68 @@ export const useOptimizedDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Demo data for testing
+  const getDemoData = useCallback((): DashboardData => ({
+    referrals: [
+      {
+        id: 'demo-1',
+        referral_code: 'DEMO123',
+        referred_email: 'john.doe@example.com',
+        status: 'verified' as const,
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+      },
+      {
+        id: 'demo-2',
+        referral_code: 'DEMO456',
+        referred_email: 'jane.smith@example.com',
+        status: 'rewarded' as const,
+        created_at: new Date(Date.now() - 172800000).toISOString(),
+      },
+      {
+        id: 'demo-3',
+        referral_code: 'DEMO789',
+        referred_email: null,
+        status: 'pending' as const,
+        created_at: new Date(Date.now() - 3600000).toISOString(),
+      },
+    ],
+    subnames: [
+      {
+        id: 'demo-sub-1',
+        subname: 'rewards.eth',
+        referral_count: 5,
+        nft_token_id: 'token123',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+      },
+      {
+        id: 'demo-sub-2',
+        subname: 'social.eth',
+        referral_count: 3,
+        nft_token_id: 'token456',
+        created_at: new Date(Date.now() - 172800000).toISOString(),
+      },
+    ],
+    stats: {
+      totalReferrals: 3,
+      verifiedReferrals: 1,
+      pendingReferrals: 1,
+      subnamesCount: 2
+    }
+  }), []);
+
   // Optimized single query for essential data
   const fetchEssentialData = useCallback(async () => {
+    if (isDemoMode) {
+      // Use demo data
+      setLoading(true);
+      setTimeout(() => {
+        setData(getDemoData());
+        setLoading(false);
+        setError(null);
+      }, 500); // Simulate loading
+      return;
+    }
+
     if (!profile?.id) return;
 
     const cacheKey = `essential-${profile.id}`;
@@ -92,15 +152,17 @@ export const useOptimizedDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [profile?.id, get, set]);
+  }, [isDemoMode, profile?.id, get, set, getDemoData]);
 
   // Refresh function that invalidates cache
   const refresh = useCallback(() => {
-    if (profile?.id) {
+    if (isDemoMode) {
+      fetchEssentialData();
+    } else if (profile?.id) {
       invalidatePattern(`essential-${profile.id}`);
       fetchEssentialData();
     }
-  }, [profile?.id, invalidatePattern, fetchEssentialData]);
+  }, [isDemoMode, profile?.id, invalidatePattern, fetchEssentialData]);
 
   useEffect(() => {
     fetchEssentialData();
