@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { RewardsPanel } from '@/components/RewardsPanel';
 import { ReferralSharePanel } from '@/components/ReferralSharePanel';
 import { SubnameMinting } from '@/components/SubnameMinting';
+import { ReferralAnalytics } from '@/components/ReferralAnalytics';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -206,7 +207,7 @@ export const Dashboard = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="share" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="share" className="flex items-center gap-2">
             <Copy className="h-4 w-4" />
             Share & Earn
@@ -215,12 +216,16 @@ export const Dashboard = () => {
             <Award className="h-4 w-4" />
             Mint NFTs
           </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Analytics
+          </TabsTrigger>
           <TabsTrigger value="referrals" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             My Referrals
           </TabsTrigger>
           <TabsTrigger value="rewards" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
+            <Gift className="h-4 w-4" />
             Rewards
           </TabsTrigger>
         </TabsList>
@@ -231,6 +236,10 @@ export const Dashboard = () => {
 
         <TabsContent value="mint" className="space-y-6">
           <SubnameMinting />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <ReferralAnalytics />
         </TabsContent>
 
         <TabsContent value="referrals" className="space-y-6">
