@@ -3,13 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Copy, Users, Gift, Award, ExternalLink, TrendingUp } from 'lucide-react';
+import { Copy, Users, Gift, Award, ExternalLink, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { RewardsPanel } from '@/components/RewardsPanel';
 import { ReferralSharePanel } from '@/components/ReferralSharePanel';
 import { SubnameMinting } from '@/components/SubnameMinting';
 import { ReferralAnalytics } from '@/components/ReferralAnalytics';
 import { ReferralProcessor } from '@/components/ReferralProcessor';
+import { ErrorDisplay } from '@/components/ui/error-boundary';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,25 +31,99 @@ interface Subname {
   created_at: string;
 }
 
-export const Dashboard = () => {
-  const { profile } = useAuth();
+// Demo data for when authentication fails or demo mode is enabled
+const getDemoData = () => ({
+  referrals: [
+    {
+      id: 'demo-1',
+      referral_code: 'DEMO123',
+      referred_email: 'john.doe@example.com',
+      status: 'verified' as const,
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: 'demo-2',
+      referral_code: 'DEMO456',
+      referred_email: 'jane.smith@example.com',
+      status: 'rewarded' as const,
+      created_at: new Date(Date.now() - 172800000).toISOString(),
+    },
+    {
+      id: 'demo-3',
+      referral_code: 'DEMO789',
+      referred_email: null,
+      status: 'pending' as const,
+      created_at: new Date(Date.now() - 3600000).toISOString(),
+    },
+  ],
+  subnames: [
+    {
+      id: 'demo-sub-1',
+      subname: 'rewards.eth',
+      referral_count: 5,
+      nft_token_id: 'token123',
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: 'demo-sub-2',
+      subname: 'social.eth',
+      referral_count: 3,
+      nft_token_id: 'token456',
+      created_at: new Date(Date.now() - 172800000).toISOString(),
+    },
+  ],
+  profile: {
+    id: 'demo-user',
+    user_id: 'demo-user',
+    email: 'demo@example.com',
+    wallet_address: '0x1234...5678',
+    dynamic_user_id: 'demo-dynamic',
+    display_name: 'Demo User',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+});
+
+interface DashboardProps {
+  isDemoMode?: boolean;
+}
+
+export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
+  const { profile, loading: authLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [subnames, setSubnames] = useState<Subname[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [referralCode, setReferralCode] = useState<string>('');
+  
+  // Use demo data when in demo mode or when authentication fails
+  const shouldUseDemoData = isDemoMode || (!isAuthenticated && !authLoading);
+  const demoData = getDemoData();
+  const currentProfile = shouldUseDemoData ? demoData.profile : profile;
 
   useEffect(() => {
-    if (profile) {
+    if (shouldUseDemoData) {
+      // Load demo data immediately
+      setReferrals(demoData.referrals);
+      setSubnames(demoData.subnames);
+      setLoading(false);
+      setError(null);
+    } else if (profile) {
       fetchDashboardData();
+    } else if (!authLoading) {
+      // Authentication failed, show error
+      setError('Authentication failed. Please try logging in again.');
+      setLoading(false);
     }
-  }, [profile]);
+  }, [profile, authLoading, shouldUseDemoData]);
 
   const fetchDashboardData = async () => {
     if (!profile) return;
 
     try {
       setLoading(true);
+      setError(null);
 
       // Fetch user's referrals
       const { data: referralsData, error: referralsError } = await supabase
@@ -71,9 +147,10 @@ export const Dashboard = () => {
 
     } catch (error: any) {
       console.error('Error fetching dashboard data:', error);
+      setError('Failed to load dashboard data. This could be due to authentication issues.');
       toast({
         title: "Error",
-        description: "Failed to load dashboard data. Please refresh the page.",
+        description: "Failed to load dashboard data. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -81,7 +158,29 @@ export const Dashboard = () => {
     }
   };
 
+  const retryDataFetch = () => {
+    if (shouldUseDemoData) {
+      setReferrals(demoData.referrals);
+      setSubnames(demoData.subnames);
+      setLoading(false);
+      setError(null);
+    } else {
+      fetchDashboardData();
+    }
+  };
+
   const generateReferralCode = async () => {
+    if (shouldUseDemoData) {
+      // Demo mode - simulate code generation
+      const demoCode = `DEMO${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      setReferralCode(demoCode);
+      toast({
+        title: "Demo: Referral Code Generated",
+        description: `Your demo referral code: ${demoCode}`,
+      });
+      return;
+    }
+
     if (!profile) return;
 
     try {
@@ -122,7 +221,7 @@ export const Dashboard = () => {
     navigator.clipboard.writeText(referralUrl);
     toast({
       title: "Copied!",
-      description: "Referral link copied to clipboard.",
+      description: shouldUseDemoData ? "Demo referral link copied to clipboard." : "Referral link copied to clipboard.",
     });
   };
 
@@ -133,22 +232,45 @@ export const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading dashboard...</p>
-        </div>
+        <LoadingSpinner size="lg" message="Loading dashboard..." />
+      </div>
+    );
+  }
+
+  if (error && !shouldUseDemoData) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <ErrorDisplay 
+          error={error}
+          title="Dashboard Loading Error"
+          description="There was an issue loading your dashboard data."
+          onRetry={retryDataFetch}
+        />
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <ReferralProcessor />
+      {!shouldUseDemoData && <ReferralProcessor />}
+      
+      {/* Demo Mode Indicator */}
+      {shouldUseDemoData && (
+        <Card className="border-accent bg-accent/10">
+          <CardContent className="flex items-center gap-2 p-4">
+            <AlertCircle className="h-5 w-5 text-accent-foreground" />
+            <p className="text-sm text-accent-foreground">
+              {isDemoMode ? 'Demo Mode: Viewing sample data' : 'Authentication unavailable: Showing demo data'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">Referral Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {profile?.display_name}! Track your referrals and earn ENS subnames.
+          Welcome back, {currentProfile?.display_name || 'User'}! Track your referrals and earn ENS subnames.
         </p>
       </div>
 

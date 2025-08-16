@@ -29,7 +29,7 @@ const Index = () => {
               onToggle={setIsDemoMode} 
             />
           )}
-          <Dashboard />
+          <Dashboard isDemoMode={isDemoMode} />
         </div>
       </div>
     );
