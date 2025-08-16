@@ -14,8 +14,8 @@ const LazyReferralSharePanel = lazy(() => import('@/components/ReferralSharePane
 const LazySubnameMinting = lazy(() => import('@/components/SubnameMinting').then(m => ({ default: m.SubnameMinting })));
 const LazyRewardsPanel = lazy(() => import('@/components/RewardsPanel').then(m => ({ default: m.RewardsPanel })));
 
-// Lightweight analytics component
-const QuickAnalytics = lazy(() => import('./QuickAnalytics').then(m => ({ default: m.QuickAnalytics })));
+// Import QuickAnalytics directly instead of lazy loading to avoid import errors
+import { QuickAnalytics } from './QuickAnalytics';
 
 const TabLoadingSpinner = () => (
   <div className="flex items-center justify-center py-8">
@@ -226,9 +226,7 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
         </TabsContent>
 
         <TabsContent value="analytics" className="animate-fade-in">
-          <Suspense fallback={<TabLoadingSpinner />}>
-            <QuickAnalytics isDemoMode={isDemoMode} />
-          </Suspense>
+          <QuickAnalytics isDemoMode={isDemoMode} />
         </TabsContent>
 
         <TabsContent value="referrals" className="space-y-4 animate-fade-in">
