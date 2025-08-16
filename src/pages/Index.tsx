@@ -1,13 +1,9 @@
-import { useState } from 'react';
 import { DynamicAuth } from '@/components/DynamicAuth';
 import { Dashboard } from '@/components/Dashboard';
-import { DemoDashboard } from '@/components/DemoDashboard';
-import { DemoModeToggle } from '@/components/DemoModeToggle';
 import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
-  const [isDemoMode, setIsDemoMode] = useState(false);
 
   if (loading) {
     return (
@@ -30,17 +26,6 @@ const Index = () => {
     );
   }
 
-  if (isDemoMode) {
-    return (
-      <div className="min-h-screen bg-background p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
-          <DemoModeToggle isDemoMode={isDemoMode} onToggle={setIsDemoMode} />
-          <DemoDashboard />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="text-center space-y-8">
@@ -54,9 +39,6 @@ const Index = () => {
           </p>
         </div>
         <DynamicAuth />
-        <div className="pt-6">
-          <DemoModeToggle isDemoMode={isDemoMode} onToggle={setIsDemoMode} />
-        </div>
       </div>
     </div>
   );

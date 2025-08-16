@@ -3,6 +3,7 @@ import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useReferralTracking } from '@/hooks/useReferralTracking';
+import type { Session } from '@supabase/supabase-js';
 
 export interface UserProfile {
   id: string;
@@ -19,77 +20,57 @@ export const useAuth = () => {
   const { user } = useDynamicContext();
   const { processReferralSignup } = useReferralTracking();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const createOrUpdateProfile = async (dynamicUser: any) => {
+  const authenticateWithDynamic = async (dynamicUser: any) => {
     try {
-      const authUser = await supabase.auth.getUser();
-      if (!authUser.data.user) {
-        // Create anonymous session for Dynamic users
-        const { data: sessionData, error: sessionError } = await supabase.auth.signInAnonymously();
-        if (sessionError) throw sessionError;
-      }
+      console.log('Authenticating with Dynamic user:', dynamicUser.userId);
+      
+      // Call our edge function to handle Dynamic authentication
+      const { data, error } = await supabase.functions.invoke('dynamic-auth', {
+        body: { dynamicUser }
+      });
 
-      const currentUser = await supabase.auth.getUser();
-      if (!currentUser.data.user) return;
-
-      const walletAddress = dynamicUser.verifiedCredentials?.[0]?.address || 
-                           dynamicUser.walletPublicKey ||
-                           null;
-
-      const profileData = {
-        user_id: currentUser.data.user.id,
-        email: dynamicUser.email || null,
-        wallet_address: walletAddress,
-        dynamic_user_id: dynamicUser.userId,
-        display_name: dynamicUser.email?.split('@')[0] || `User${Date.now()}`,
-      };
-
-      // Try to get existing profile first
-      const { data: existingProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('dynamic_user_id', dynamicUser.userId)
-        .single();
-
-      if (existingProfile) {
-        // Update existing profile
-        const { data, error } = await supabase
-          .from('profiles')
-          .update({
-            email: profileData.email,
-            wallet_address: profileData.wallet_address,
-            display_name: profileData.display_name,
-          })
-          .eq('id', existingProfile.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        setProfile(data);
+      if (error) throw error;
+      
+      if (data.success && data.session_url) {
+        // Use the session URL to establish Supabase session
+        const url = new URL(data.session_url);
+        const accessToken = url.searchParams.get('access_token');
+        const refreshToken = url.searchParams.get('refresh_token');
         
-        // Process referral signup for new users
-        await processReferralSignup(data);
-      } else {
-        // Create new profile
-        const { data, error } = await supabase
-          .from('profiles')
-          .insert(profileData)
-          .select()
-          .single();
-
-        if (error) throw error;
-        setProfile(data);
-        
-        // Process referral signup for new users
-        await processReferralSignup(data);
+        if (accessToken && refreshToken) {
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+          
+          if (sessionError) throw sessionError;
+          
+          setSession(sessionData.session);
+          
+          // Fetch the profile
+          if (sessionData.user) {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('dynamic_user_id', dynamicUser.userId)
+              .single();
+              
+            if (profileData) {
+              setProfile(profileData);
+              await processReferralSignup(profileData);
+            }
+          }
+        }
       }
     } catch (error: any) {
-      console.error('Error creating/updating profile:', error);
+      console.error('Error authenticating with Dynamic:', error);
       toast({
-        title: "Profile Error",
-        description: "Failed to create or update profile. Please try again.",
+        title: "Authentication Error",
+        description: "Failed to authenticate. Please try again.",
         variant: "destructive",
       });
     }
@@ -112,38 +93,55 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
+    // Set up Supabase auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('Supabase auth state changed:', event, session?.user?.id);
+        setSession(session);
+        
+        if (session?.user && !profile) {
+          // Fetch profile when session is established
+          setTimeout(async () => {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .single();
+              
+            if (profileData) {
+              setProfile(profileData);
+            }
+          }, 0);
+        } else if (!session) {
+          setProfile(null);
+        }
+      }
+    );
+
+    // Handle Dynamic user authentication
     const handleAuthState = async () => {
       setLoading(true);
       
-      if (user) {
-        try {
-          // Check if profile exists
-          const existingProfile = await fetchProfile(user.userId);
-          
-          if (existingProfile) {
-            setProfile(existingProfile);
-          } else {
-            // Create new profile
-            await createOrUpdateProfile(user);
-          }
-        } catch (error) {
-          console.error('Auth state error:', error);
-        }
-      } else {
+      if (user && !session) {
+        await authenticateWithDynamic(user);
+      } else if (!user) {
         setProfile(null);
+        setSession(null);
       }
       
       setLoading(false);
     };
 
     handleAuthState();
-  }, [user]);
+
+    return () => subscription.unsubscribe();
+  }, [user, session]);
 
   return {
     user,
     profile,
-    isAuthenticated: !!user && !!profile,
+    session,
+    isAuthenticated: !!user && !!profile && !!session,
     loading,
-    createOrUpdateProfile,
   };
 };
