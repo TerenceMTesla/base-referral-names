@@ -45,7 +45,7 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
         <ErrorDisplay 
           error={error}
           title="Dashboard Loading Error"
-          description="There was an issue loading your dashboard."
+          description="There was an issue loading your dashboard data."
           onRetry={refresh}
         />
       </div>
@@ -53,105 +53,111 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
   }
 
   return (
-    <div className="space-y-8">
-      {/* Enhanced Tabs with new flow */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="border-b border-border bg-card/50 p-4 rounded-t-lg">
-          <TabsList className="grid w-full grid-cols-6 h-auto p-1 bg-muted/50">
-            <TabsTrigger value="share" className="flex items-center gap-2 py-3">
-              <Share className="h-4 w-4" />
-              Share
-            </TabsTrigger>
-            <TabsTrigger value="earn" className="flex items-center gap-2 py-3">
-              <Coins className="h-4 w-4" />
-              Earn
-            </TabsTrigger>
-            <TabsTrigger value="mint" className="flex items-center gap-2 py-3">
-              <Image className="h-4 w-4" />
-              Mint NFTs
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2 py-3">
-              <TrendingUp className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
-            <TabsTrigger value="referrals" className="flex items-center gap-2 py-3">
-              <Users className="h-4 w-4" />
-              My Referrals
-            </TabsTrigger>
-            <TabsTrigger value="rewards" className="flex items-center gap-2 py-3">
-              <Award className="h-4 w-4" />
-              Rewards
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        {/* ENS Referrals Program Branding */}
-        <div className="relative overflow-hidden card-primary rounded-lg p-8 text-center animate-fade-in">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-50"></div>
-          <div className="relative z-10 space-y-4">
-            <div className="flex items-center justify-center gap-4">
-              <ENSLogo size="lg" className="animate-pulse-slow" />
-              <div className="text-left">
-                <h1 className="text-4xl font-bold text-primary-foreground mb-2">
-                  The ENS Referrals Program
-                </h1>
-                <p className="text-primary-foreground/90 text-lg max-w-2xl">
-                  Share your unique referral link, earn rewards, and mint exclusive NFT subnames. 
-                  Join the decentralized naming revolution and get rewarded for growing the ENS ecosystem.
-                </p>
-              </div>
-            </div>
-            <Button variant="outline" onClick={refresh} size="sm" className="bg-primary-foreground/20 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/30">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh Data
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        
+        {/* Sticky Navigation Tabs - Always Visible */}
+        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm">
+          <div className="container mx-auto px-4 py-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-6 bg-muted/50 p-1 rounded-xl">
+                <TabsTrigger value="share" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">
+                  <Share className="h-4 w-4" />
+                  <span className="hidden sm:inline">Share</span>
+                </TabsTrigger>
+                <TabsTrigger value="earn" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-lg">
+                  <Coins className="h-4 w-4" />
+                  <span className="hidden sm:inline">Earn</span>
+                </TabsTrigger>
+                <TabsTrigger value="mint" className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground rounded-lg">
+                  <Award className="h-4 w-4" />
+                  <span className="hidden sm:inline">Mint NFTs</span>
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                </TabsTrigger>
+                <TabsTrigger value="referrals" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-lg">
+                  <Users className="h-4 w-4" />
+                  <span className="hidden sm:inline">Referrals</span>
+                </TabsTrigger>
+                <TabsTrigger value="rewards" className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground rounded-lg">
+                  <Gift className="h-4 w-4" />
+                  <span className="hidden sm:inline">Rewards</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 
-        {/* Quick Stats - Always visible with ENS branding */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-slide-up">
-          <Card className="card-hover border-primary/20">
+        {/* ENS Referrals Program Header - Compact Version */}
+        <div className="text-center space-y-4 py-6">
+          <div className="flex items-center justify-center gap-4">
+            <ENSLogo className="h-12 w-12" />
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                ENS Referrals Program
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Share the future of decentralized naming and earn exclusive rewards
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Dashboard - Always Visible */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="card-hover border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-primary">
+              <CardTitle className="text-sm font-medium text-primary flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Total Referrals
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{data.stats.totalReferrals}</div>
-              <p className="text-xs text-muted-foreground mt-1">All time</p>
+              <div className="text-2xl font-bold text-gradient">
+                {data.stats.totalReferrals}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Friends invited</p>
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-accent/20">
+          <Card className="card-hover border-accent/20 bg-gradient-to-br from-accent/10 to-accent/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-accent">
+              <CardTitle className="text-sm font-medium text-accent flex items-center gap-2">
                 <Gift className="h-4 w-4" />
-                Verified
+                Verified Referrals
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">{data.stats.verifiedReferrals}</div>
-              <p className="text-xs text-muted-foreground mt-1">Active users</p>
+              <div className="text-2xl font-bold text-gradient">
+                {data.stats.verifiedReferrals}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Successful joins</p>
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-secondary/20">
+          <Card className="card-hover border-secondary/20 bg-gradient-to-br from-secondary/10 to-secondary/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-secondary">
+              <CardTitle className="text-sm font-medium text-secondary flex items-center gap-2">
                 <Award className="h-4 w-4" />
                 NFT Subnames
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-secondary">{data.stats.subnamesCount}</div>
-              <p className="text-xs text-muted-foreground mt-1">Collectibles earned</p>
+              <div className="text-2xl font-bold text-gradient">
+                {data.stats.subnamesCount}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Subnames earned</p>
             </CardContent>
           </Card>
 
-          <Card className="card-hover">
+          <Card className="card-hover border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-primary">Success Rate</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Success Rate
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gradient">
@@ -164,126 +170,136 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
           </Card>
         </div>
 
-        <TabsContent value="share" className="animate-fade-in">
-          <Card className="card-primary">
-            <CardHeader>
-              <CardTitle className="text-xl text-primary-foreground flex items-center gap-2">
-                <Share className="h-5 w-5" />
-                Share Your Referral Link
-              </CardTitle>
-              <CardDescription className="text-primary-foreground/80">
-                Spread the word about ENS and earn rewards for every successful referral
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <Suspense fallback={<TabLoadingSpinner />}>
-                <LazyReferralSharePanel isDemoMode={isDemoMode} />
-              </Suspense>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* Tab Content - No need to scroll past header */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsContent value="share" className="animate-fade-in">
+            <Card className="card-primary border-primary/30 bg-gradient-to-br from-primary/20 to-primary/10">
+              <CardHeader>
+                <CardTitle className="text-xl text-primary flex items-center gap-2">
+                  <Share className="h-5 w-5" />
+                  Share Your Referral Link
+                </CardTitle>
+                <CardDescription className="text-primary/80">
+                  Spread the word about ENS and earn rewards for every successful referral
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <Suspense fallback={<TabLoadingSpinner />}>
+                  <LazyReferralSharePanel isDemoMode={isDemoMode} />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="earn" className="space-y-4 animate-fade-in">
-          <Card className="card-hover">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2 text-primary">
-                <Coins className="h-5 w-5" />
-                How to Earn Rewards
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4">
-                <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <div className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</div>
-                  <div>
-                    <h4 className="font-medium text-primary">Share Your Link</h4>
-                    <p className="text-sm text-muted-foreground">Copy and share your unique referral link with friends</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-4 bg-accent/5 rounded-lg border border-accent/20">
-                  <div className="bg-accent text-accent-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">2</div>
-                  <div>
-                    <h4 className="font-medium text-accent">Friends Join ENS</h4>
-                    <p className="text-sm text-muted-foreground">When they sign up using your link, you both benefit</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-4 bg-secondary/5 rounded-lg border border-secondary/20">
-                  <div className="bg-secondary text-secondary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</div>
-                  <div>
-                    <h4 className="font-medium text-secondary">Earn NFT Rewards</h4>
-                    <p className="text-sm text-muted-foreground">Unlock exclusive subname NFTs based on referral milestones</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="mint" className="animate-fade-in">
-          <Suspense fallback={<TabLoadingSpinner />}>
-            <LazySubnameMinting isDemoMode={isDemoMode} />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="animate-fade-in">
-          <QuickAnalytics isDemoMode={isDemoMode} />
-        </TabsContent>
-
-        <TabsContent value="referrals" className="space-y-4 animate-fade-in">
-          <Card className="card-hover">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2 text-primary">
-                <Users className="h-5 w-5" />
-                Recent Referrals
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {data.referrals.length === 0 ? (
-                <div className="text-center py-8">
-                  <Users className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    No referrals yet. Start sharing to earn rewards!
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {data.referrals.slice(0, 10).map((referral: any, index: number) => (
-                    <div key={referral.id} className={`flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors animate-fade-in stagger-${Math.min(index + 1, 4)}`}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Users className="h-4 w-4 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">{referral.referral_code}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {referral.referred_email || 'Pending signup'}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge 
-                        variant={referral.status === 'verified' ? 'default' : 'outline'}
-                        className={`text-xs ${
-                          referral.status === 'verified' 
-                            ? 'bg-accent text-accent-foreground' 
-                            : 'border-warning text-warning'
-                        }`}
-                      >
-                        {referral.status}
-                      </Badge>
+          <TabsContent value="earn" className="space-y-4 animate-fade-in">
+            <Card className="card-hover border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2 text-accent">
+                  <Coins className="h-5 w-5" />
+                  How to Earn Rewards
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="flex items-start gap-3 p-4 bg-primary/10 rounded-lg border border-primary/30">
+                    <div className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</div>
+                    <div>
+                      <h4 className="font-medium text-primary">Share Your Link</h4>
+                      <p className="text-sm text-muted-foreground">Copy and share your unique referral link with friends</p>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-accent/10 rounded-lg border border-accent/30">
+                    <div className="bg-accent text-accent-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">2</div>
+                    <div>
+                      <h4 className="font-medium text-accent">Friends Join ENS</h4>
+                      <p className="text-sm text-muted-foreground">When they sign up using your link, you both benefit</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-secondary/10 rounded-lg border border-secondary/30">
+                    <div className="bg-secondary text-secondary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</div>
+                    <div>
+                      <h4 className="font-medium text-secondary">Earn NFT Rewards</h4>
+                      <p className="text-sm text-muted-foreground">Unlock exclusive subname NFTs based on referral milestones</p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="rewards" className="animate-fade-in">
-          <Suspense fallback={<TabLoadingSpinner />}>
-            <LazyRewardsPanel isDemoMode={isDemoMode} />
-          </Suspense>
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="mint" className="animate-fade-in">
+            <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl p-6 border border-secondary/30">
+              <Suspense fallback={<TabLoadingSpinner />}>
+                <LazySubnameMinting isDemoMode={isDemoMode} />
+              </Suspense>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="animate-fade-in">
+            <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-6 border border-primary/30">
+              <QuickAnalytics isDemoMode={isDemoMode} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="referrals" className="space-y-4 animate-fade-in">
+            <Card className="card-hover border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2 text-accent">
+                  <Users className="h-5 w-5" />
+                  Recent Referrals
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {data.referrals.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      No referrals yet. Start sharing to earn rewards!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {data.referrals.slice(0, 10).map((referral: any, index: number) => (
+                      <div key={referral.id} className={`flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors animate-fade-in stagger-${Math.min(index + 1, 4)}`}>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                            <Users className="h-4 w-4 text-accent" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{referral.referral_code}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {referral.referred_email || 'Pending signup'}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge 
+                          className={`${
+                            referral.status === 'verified' 
+                              ? 'border-success text-success bg-success/10' 
+                              : referral.status === 'pending'
+                              ? 'border-warning text-warning bg-warning/10'
+                              : 'border-secondary text-secondary bg-secondary/10'
+                          }`}
+                        >
+                          {referral.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="rewards" className="animate-fade-in">
+            <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl p-6 border border-secondary/30">
+              <Suspense fallback={<TabLoadingSpinner />}>
+                <LazyRewardsPanel isDemoMode={isDemoMode} />
+              </Suspense>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
