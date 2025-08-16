@@ -8,41 +8,66 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* Base colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
+    /* Card colors */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
+    /* Popover colors */
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* ENS Brand Colors - Primary blue theme */
+    --primary: 217 91% 60%; /* ENS Blue */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 217 91% 70%;
+    --primary-dark: 217 91% 45%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Complementary purple */
+    --secondary: 267 83% 65%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-light: 267 83% 75%;
 
+    /* Muted - Neutral grays */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Web3 green for success states */
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 98%;
+    --accent-light: 142 76% 46%;
 
+    /* Warning - Amber for pending states */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 9%;
+
+    /* Destructive - Red for errors */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
+    /* Border and input */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
+    /* Radius */
+    --radius: 0.75rem;
+
+    /* Brand gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
 
     /* Animation variables */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --shadow-glow: 0 0 20px hsl(var(--primary) / 0.15);
     --shadow-hover: 0 10px 30px -5px hsl(var(--primary) / 0.2);
+    --shadow-accent: 0 0 20px hsl(var(--accent) / 0.15);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -55,33 +80,56 @@ All colors MUST be HSL.
   }
 
   .dark {
+    /* Base colors */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
+    /* Card colors */
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
+    /* Popover colors */
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    /* ENS Brand Colors - Primary blue theme (adjusted for dark) */
+    --primary: 217 91% 65%;
     --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-glow: 217 91% 75%;
+    --primary-dark: 217 91% 50%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary - Complementary purple (adjusted for dark) */
+    --secondary: 267 83% 70%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-light: 267 83% 80%;
 
+    /* Muted - Neutral grays */
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    /* Accent - Web3 green (adjusted for dark) */
+    --accent: 142 76% 41%;
     --accent-foreground: 210 40% 98%;
+    --accent-light: 142 76% 51%;
 
+    /* Warning - Amber for pending states */
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 9%;
+
+    /* Destructive - Red for errors */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
+    /* Border and input */
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 217 91% 65%;
+
+    /* Brand gradients (dark mode) */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -104,6 +152,7 @@ All colors MUST be HSL.
 }
 
 @layer components {
+  /* Enhanced animations */
   .animate-fade-in {
     animation: fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
@@ -116,19 +165,61 @@ All colors MUST be HSL.
     animation: scale-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
+  /* Enhanced card interactions */
   .card-hover {
     transition: var(--transition-smooth);
+    border: 1px solid hsl(var(--border));
   }
 
   .card-hover:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-hover);
+    border-color: hsl(var(--primary) / 0.3);
   }
 
+  .card-primary {
+    background: var(--gradient-primary);
+    color: hsl(var(--primary-foreground));
+  }
+
+  .card-secondary {
+    background: var(--gradient-secondary);
+    color: hsl(var(--secondary-foreground));
+  }
+
+  .card-accent {
+    background: var(--gradient-accent);
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Enhanced button effects */
   .button-glow:hover {
     box-shadow: var(--shadow-glow);
   }
 
+  .button-primary {
+    background: var(--gradient-primary);
+    transition: var(--transition-smooth);
+  }
+
+  .button-primary:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+  }
+
+  /* Typography enhancements */
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-brand {
+    color: hsl(var(--primary));
+  }
+
+  /* Stagger animations */
   .stagger-1 { animation-delay: 0.1s; }
   .stagger-2 { animation-delay: 0.2s; }
   .stagger-3 { animation-delay: 0.3s; }

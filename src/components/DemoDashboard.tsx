@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Copy, Crown, Medal, Award, Trophy, Users, Gift, TrendingUp, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { ENSLogo } from '@/components/ENSLogo';
 
 export const DemoDashboard = () => {
   const [referralCode, setReferralCode] = useState('DEMO-REF-12345');
@@ -53,12 +54,15 @@ export const DemoDashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-2 animate-fade-in">
-        <h1 className="text-4xl font-bold">Dashboard Demo</h1>
-        <p className="text-xl text-muted-foreground">
-          Explore the referral system with sample data
+      <div className="text-center space-y-4 animate-fade-in">
+        <div className="flex items-center justify-center gap-3">
+          <ENSLogo size="lg" className="animate-bounce-gentle" />
+          <h1 className="text-5xl font-bold text-gradient">ENS Referral Hub</h1>
+        </div>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Explore the referral system with sample data and experience the power of decentralized naming
         </p>
-        <Badge variant="secondary" className="text-sm animate-pulse-slow">
+        <Badge variant="secondary" className="text-sm animate-pulse-slow bg-primary/10 text-primary border-primary/20">
           Demo Mode - Sample Data
         </Badge>
       </div>
