@@ -101,22 +101,27 @@ serve(async (req) => {
       log('INFO', `[${requestId}] Attempting to find existing user by email`);
       
       try {
-        const { data: existingUser, error: getUserError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
+        const { data: existingUsers, error: getUserError } = await supabaseAdmin.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000
+        });
         
         if (getUserError) {
-          log('WARN', `[${requestId}] Error fetching user by email`, getUserError);
+          log('WARN', `[${requestId}] Error listing users`, getUserError);
         }
         
-        if (existingUser.user) {
-          log('INFO', `[${requestId}] Found existing user by email: ${existingUser.user.id}`);
-          authUser = existingUser.user;
+        const existingUser = existingUsers?.users?.find(u => u.email === email);
+        
+        if (existingUser) {
+          log('INFO', `[${requestId}] Found existing user by email: ${existingUser.id}`);
+          authUser = existingUser;
           
           // Update user metadata if needed
-          if (walletAddress && existingUser.user.user_metadata?.wallet_address !== walletAddress) {
+          if (walletAddress && existingUser.user_metadata?.wallet_address !== walletAddress) {
             log('INFO', `[${requestId}] Updating user metadata with new wallet address`);
-            await supabaseAdmin.auth.admin.updateUserById(existingUser.user.id, {
+            await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
               user_metadata: {
-                ...existingUser.user.user_metadata,
+                ...existingUser.user_metadata,
                 wallet_address: walletAddress,
                 dynamic_user_id: dynamicUser.userId
               }

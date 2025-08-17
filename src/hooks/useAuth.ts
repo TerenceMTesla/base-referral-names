@@ -39,47 +39,14 @@ export const useAuth = () => {
       }
       
       if (data?.success && data?.session_url) {
-        // Use the session URL to establish Supabase session
-        const url = new URL(data.session_url);
-        const accessToken = url.searchParams.get('access_token');
-        const refreshToken = url.searchParams.get('refresh_token');
+        console.log('Authentication successful, setting up session...');
         
-        if (accessToken && refreshToken) {
-          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken
-          });
-          
-          if (sessionError) {
-            console.error('Session error:', sessionError);
-            throw sessionError;
-          }
-          
-          setSession(sessionData.session);
-          
-          // Fetch the profile
-          if (sessionData.user) {
-            setTimeout(async () => {
-              try {
-                const { data: profileData } = await supabase
-                  .from('profiles')
-                  .select('*')
-                  .eq('dynamic_user_id', dynamicUser.userId)
-                  .single();
-                  
-                if (profileData) {
-                  setProfile(profileData);
-                  await processReferralSignup(profileData);
-                }
-              } catch (profileError) {
-                console.error('Error fetching profile:', profileError);
-              }
-            }, 100);
-          }
-        }
+        // Navigate to the session URL to establish authentication
+        window.location.href = data.session_url;
+        return; // Exit here as the page will redirect
       } else {
         console.error('Invalid response from dynamic-auth function:', data);
-        throw new Error('Invalid authentication response');
+        throw new Error(data?.error || 'Invalid authentication response');
       }
     } catch (error: any) {
       console.error('Error authenticating with Dynamic:', error);
@@ -126,6 +93,8 @@ export const useAuth = () => {
                 
               if (profileData) {
                 setProfile(profileData);
+                // Process any stored referral when profile is loaded
+                await processReferralSignup(profileData);
               }
             } catch (error) {
               console.error('Error fetching profile in auth state change:', error);
