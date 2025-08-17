@@ -23,6 +23,7 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
   const { toast } = useToast();
   const [subdomain, setSubdomain] = useState('');
   const [description, setDescription] = useState('');
+  const [landsOnUrl, setLandsOnUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [createdSubdomainReferral, setCreatedSubdomainReferral] = useState<any>(null);
 
@@ -62,7 +63,8 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
             is_active: true,
             referral_code: `${subdomain.toUpperCase().substr(0, 3)}${Math.random().toString(36).substr(2, 3).toUpperCase()}`,
             members: 1,
-            totalReferrals: 0
+            totalReferrals: 0,
+            lands_on_url: landsOnUrl.trim() || null
           }
         };
         
@@ -104,7 +106,8 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
             created_at: new Date().toISOString(),
             ens_domain: ensDomain.name,
             community_name: subdomain.trim(),
-            is_active: true
+            is_active: true,
+            lands_on_url: landsOnUrl.trim() || null
           }
         })
         .select()
@@ -195,6 +198,19 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Will create: {subdomain ? `${subdomain.toLowerCase()}.demo.eth` : 'yourname.demo.eth'}
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="landsOnUrl">Lands On (Optional)</Label>
+                  <Input
+                    id="landsOnUrl"
+                    placeholder="https://yourwebsite.com or app.yourname.com"
+                    value={landsOnUrl}
+                    onChange={(e) => setLandsOnUrl(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Where visitors to {subdomain ? `${subdomain.toLowerCase()}.demo.eth` : 'your subdomain'} will be redirected
                   </p>
                 </div>
                 
@@ -308,6 +324,19 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
               {createdSubdomainReferral.metadata?.description && (
                 <p className="text-sm text-muted-foreground">{createdSubdomainReferral.metadata.description}</p>
               )}
+              {createdSubdomainReferral.metadata?.lands_on_url && (
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-xs text-muted-foreground">Redirects to:</span>
+                  <a 
+                    href={createdSubdomainReferral.metadata.lands_on_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-xs text-primary hover:underline font-mono"
+                  >
+                    {createdSubdomainReferral.metadata.lands_on_url}
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
@@ -390,6 +419,18 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
                 Will create: <span className="font-mono">{subdomain}.{ensDomain?.name}</span>
               </p>
             )}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium block mb-1">Lands On (Optional)</label>
+            <Input
+              placeholder="https://yourwebsite.com or app.yourname.com"
+              value={landsOnUrl}
+              onChange={(e) => setLandsOnUrl(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Where visitors to {subdomain ? `${subdomain}.${ensDomain?.name}` : 'your subdomain'} will be redirected
+            </p>
           </div>
 
           <div>
