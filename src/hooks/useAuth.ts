@@ -112,8 +112,19 @@ export const useAuth = () => {
   useEffect(() => {
     // Handle Dynamic user authentication separately
     const handleAuthState = async () => {
+      console.log('Auth state check:', { 
+        hasUser: !!user, 
+        hasSession: !!session, 
+        userId: user?.userId,
+        loading 
+      });
+      
       if (user && !session) {
-        console.log('Dynamic user authenticated, creating Supabase session...', user.userId);
+        console.log('Dynamic user authenticated, creating Supabase session...', {
+          userId: user.userId,
+          email: user.email,
+          walletAddress: user.verifiedCredentials?.[0]?.address
+        });
         setLoading(true);
         try {
           await authenticateWithDynamic(user);
