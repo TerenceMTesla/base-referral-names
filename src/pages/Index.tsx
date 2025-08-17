@@ -11,7 +11,7 @@ const Index = () => {
 
   useEffect(() => {
     if(loading) return;
-    setIsDemoMode(isAuthenticated);
+    setIsDemoMode(true);
   },[loading])
 
   if (loading) {
