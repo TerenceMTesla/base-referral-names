@@ -22,11 +22,14 @@ export const useAuth = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
-  const authenticateWithDynamic = async (dynamicUser: any) => {
+  const authenticateWithDynamic = async (dynamicUser: any, isRetry = false) => {
     try {
-      console.log('=== Starting Dynamic Authentication ===');
+      setAuthError(null);
+      console.log('=== Starting Dynamic Authentication ===', { isRetry, retryCount });
       console.log('Dynamic user data:', {
         userId: dynamicUser.userId,
         email: dynamicUser.email,
@@ -51,6 +54,10 @@ export const useAuth = () => {
         console.log('Authentication successful, redirecting to session URL...');
         console.log('Session URL:', data.session_url);
         
+        // Clear any previous error state
+        setAuthError(null);
+        setRetryCount(0);
+        
         // Navigate to the session URL to establish authentication
         window.location.href = data.session_url;
         return; // Exit here as the page will redirect
@@ -63,13 +70,44 @@ export const useAuth = () => {
       console.error('Error details:', {
         message: error.message,
         stack: error.stack,
-        name: error.name
+        name: error.name,
+        isRetry,
+        retryCount
       });
+      
+      const errorMessage = error.message || "Failed to authenticate. Please try again.";
+      setAuthError(errorMessage);
+      
+      // Auto-retry logic for transient errors
+      if (!isRetry && retryCount < 2 && 
+          (error.message?.includes('Service Unavailable') || 
+           error.message?.includes('network') ||
+           error.message?.includes('timeout'))) {
+        console.log(`Auto-retrying authentication (attempt ${retryCount + 1}/2)...`);
+        setRetryCount(prev => prev + 1);
+        setTimeout(() => {
+          authenticateWithDynamic(dynamicUser, true);
+        }, 2000);
+        return;
+      }
+      
       toast({
         title: "Authentication Error",
-        description: error.message || "Failed to authenticate. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+      
+      setLoading(false);
+      throw error;
+    }
+  };
+
+  const retryAuthentication = () => {
+    if (user) {
+      setRetryCount(0);
+      setAuthError(null);
+      setLoading(true);
+      authenticateWithDynamic(user);
     }
   };
 
@@ -131,6 +169,8 @@ export const useAuth = () => {
         hasUser: !!user, 
         hasSession: !!session, 
         userId: user?.userId,
+        email: user?.email,
+        walletAddress: user?.verifiedCredentials?.[0]?.address,
         loading 
       });
       
@@ -155,6 +195,10 @@ export const useAuth = () => {
         setSession(null);
         setLoading(false);
       } else if (!user && !session) {
+        console.log('No user and no session, authentication clear');
+        setLoading(false);
+      } else if (session && !profile) {
+        console.log('Session exists but no profile, trying to fetch profile');
         setLoading(false);
       }
     };
@@ -168,5 +212,8 @@ export const useAuth = () => {
     session,
     isAuthenticated: !!user && !!profile && !!session,
     loading,
+    authError,
+    retryAuthentication,
+    retryCount
   };
 };

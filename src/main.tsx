@@ -27,7 +27,7 @@ createRoot(document.getElementById("root")!).render(
     settings={{
       environmentId: DYNAMIC_ENVIRONMENT_ID,
       walletConnectors: [EthereumWalletConnectors],
-      appLogoUrl: '/favicon.ico',
+      appLogoUrl: 'https://753ea4ce-e011-471d-9783-2f916efecf4d.lovableproject.com/favicon.ico',
       appName: 'ENS Referrals',
       privacyPolicyUrl: '/privacy',
       termsOfServiceUrl: '/terms',

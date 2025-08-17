@@ -8,12 +8,16 @@ import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export const DynamicAuth = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, authError, retryAuthentication, retryCount } = useAuth();
   const [hasConnectionError, setHasConnectionError] = useState(false);
 
   // Handle Dynamic SDK initialization errors gracefully
   const handleRetry = () => {
-    window.location.reload();
+    if (authError && retryAuthentication) {
+      retryAuthentication();
+    } else {
+      window.location.reload();
+    }
   };
 
   // Check for Dynamic SDK connection errors
@@ -107,6 +111,51 @@ export const DynamicAuth = () => {
     );
   }
 
+  // Show auth error state if authentication fails
+  if (authError && !loading) {
+    return (
+      <Card className="w-full max-w-lg mx-auto border-destructive/30 bg-gradient-to-br from-destructive/10 to-destructive/5">
+        <CardHeader className="text-center">
+          <CardTitle className="text-destructive flex items-center justify-center gap-2">
+            <AlertTriangle className="h-5 w-5" />
+            Authentication Failed
+          </CardTitle>
+          <CardDescription>
+            {authError}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {retryCount > 0 && (
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Retry Attempt {retryCount}</AlertTitle>
+              <AlertDescription>
+                Automatically retrying authentication...
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          <div className="space-y-3">
+            <h4 className="font-semibold">Troubleshooting steps:</h4>
+            <ol className="text-sm space-y-1 list-decimal list-inside">
+              <li>Check your internet connection</li>
+              <li>Try disconnecting and reconnecting your wallet</li>
+              <li>Refresh the page and try again</li>
+              <li>Contact support if the issue persists</li>
+            </ol>
+          </div>
+
+          <div className="flex gap-2">
+            <Button onClick={handleRetry} className="flex-1" variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry Authentication
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Show error state if Dynamic SDK fails to connect
   if (hasConnectionError) {
     return (
@@ -127,7 +176,7 @@ export const DynamicAuth = () => {
             <AlertDescription className="space-y-2">
               <p>The Dynamic Labs environment ID appears to be invalid or not properly configured.</p>
               <p className="text-sm font-mono bg-muted p-2 rounded">
-                Environment ID: fe84593e-fefc-4303-aed9-099ee46cf8a9
+                Environment ID: 1e1d5fb2-1fec-43b3-a497-04cfb4e7427f
               </p>
             </AlertDescription>
           </Alert>
