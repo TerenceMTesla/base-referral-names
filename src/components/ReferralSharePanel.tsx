@@ -31,9 +31,6 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
 
   return (
     <div className="space-y-6">
-      {/* Multiple Referral Links Manager */}
-      <ReferralLinksManager isDemoMode={isDemoMode} />
-
       {/* ENS Subdomain Referral Panel */}
       <ENSSubdomainReferralPanel isDemoMode={isDemoMode} />
 
@@ -250,6 +247,9 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
         ) : null}
         </CardContent>
       </Card>
+
+      {/* Multiple Referral Links Manager - Moved to bottom */}
+      <ReferralLinksManager isDemoMode={isDemoMode} />
     </div>
   );
 };
