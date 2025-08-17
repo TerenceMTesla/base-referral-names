@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { DynamicAuth } from '@/components/DynamicAuth';
 import { Dashboard } from '@/components/Dashboard';
 import { ENSLogo } from '@/components/ENSLogo';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
+  const [showDemo, setShowDemo] = useState(false);
 
   if (loading) {
     return (
@@ -17,7 +20,7 @@ const Index = () => {
     );
   }
 
-  if (isAuthenticated) {
+  if (isAuthenticated || showDemo) {
     return (
       <div className="min-h-screen bg-background p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
@@ -25,10 +28,22 @@ const Index = () => {
           <div className="mb-6 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <ENSLogo size="md" />
-              <h1 className="text-2xl md:text-3xl font-bold text-gradient">ENS Referrals Dashboard</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gradient">
+                ENS Referrals Dashboard {showDemo && "(Demo Mode)"}
+              </h1>
             </div>
-            <div className="max-w-xs">
-              <DynamicAuth />
+            <div className="flex items-center gap-3">
+              {showDemo && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowDemo(false)}
+                >
+                  Exit Demo
+                </Button>
+              )}
+              <div className="max-w-xs">
+                <DynamicAuth />
+              </div>
             </div>
           </div>
           <Dashboard />
@@ -59,6 +74,13 @@ const Index = () => {
             <div className="max-w-md mx-auto">
               <DynamicAuth />
             </div>
+            <Button 
+              variant="secondary" 
+              onClick={() => setShowDemo(true)}
+              className="mt-4"
+            >
+              View Demo Dashboard
+            </Button>
           </div>
 
           {/* Hero Section */}
