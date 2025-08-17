@@ -32,7 +32,7 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
 
   // Demo mode data
   const demoSubdomainData = {
-    subdomain: 'gaming.demo.eth',
+    subdomain: 'gaming.ezens.eth',
     description: 'Join our gaming community and earn exclusive NFT rewards!',
     referralCode: 'GAMING123',
     members: 247,

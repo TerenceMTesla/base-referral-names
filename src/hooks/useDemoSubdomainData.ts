@@ -28,7 +28,7 @@ export const useDemoSubdomainData = () => {
     const initialCommunities: DemoSubdomainCommunity[] = [
       {
         id: 'demo-gaming',
-        subname: 'gaming.demo.eth',
+        subname: 'gaming.ezens.eth',
         community_name: 'Gaming',
         description: 'Join our gaming community and earn exclusive NFT rewards!',
         referral_code: 'GAMING123',
@@ -48,7 +48,7 @@ export const useDemoSubdomainData = () => {
       },
       {
         id: 'demo-defi',
-        subname: 'defi.demo.eth',
+        subname: 'defi.ezens.eth',
         community_name: 'DeFi',
         description: 'Explore DeFi together and earn yield-farming NFTs!',
         referral_code: 'DEFI456',
