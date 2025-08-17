@@ -31,7 +31,7 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
   return (
     <div className="space-y-6">
       {/* ENS Subdomain Referral Panel */}
-      <ENSSubdomainReferralPanel isDemoMode={isDemoMode} />
+      <ENSSubdomainReferralPanel />
 
       {/* Demo Subdomain Dashboard */}
       
