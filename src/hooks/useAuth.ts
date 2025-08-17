@@ -26,12 +26,21 @@ export const useAuth = () => {
 
   const authenticateWithDynamic = async (dynamicUser: any) => {
     try {
-      console.log('Authenticating with Dynamic user:', dynamicUser.userId);
+      console.log('=== Starting Dynamic Authentication ===');
+      console.log('Dynamic user data:', {
+        userId: dynamicUser.userId,
+        email: dynamicUser.email,
+        verifiedCredentials: dynamicUser.verifiedCredentials,
+        walletPublicKey: dynamicUser.walletPublicKey
+      });
       
       // Call our edge function to handle Dynamic authentication
+      console.log('Calling dynamic-auth edge function...');
       const { data, error } = await supabase.functions.invoke('dynamic-auth', {
         body: { dynamicUser }
       });
+
+      console.log('Edge function response:', { data, error });
 
       if (error) {
         console.error('Supabase function error:', error);
@@ -39,7 +48,8 @@ export const useAuth = () => {
       }
       
       if (data?.success && data?.session_url) {
-        console.log('Authentication successful, setting up session...');
+        console.log('Authentication successful, redirecting to session URL...');
+        console.log('Session URL:', data.session_url);
         
         // Navigate to the session URL to establish authentication
         window.location.href = data.session_url;
@@ -49,7 +59,12 @@ export const useAuth = () => {
         throw new Error(data?.error || 'Invalid authentication response');
       }
     } catch (error: any) {
-      console.error('Error authenticating with Dynamic:', error);
+      console.error('=== Authentication Error ===');
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       toast({
         title: "Authentication Error",
         description: error.message || "Failed to authenticate. Please try again.",
