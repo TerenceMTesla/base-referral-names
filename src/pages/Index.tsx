@@ -6,7 +6,7 @@ import { ENSLogo } from '@/components/ENSLogo';
 import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
-  const { isAuthenticated, user, profile session, loading } = useAuth();
+  const { isAuthenticated, user, profile, session, loading } = useAuth();
   const [isDemoMode, setIsDemoMode] = useState(isAuthenticated);
 
   useEffect(() => {
