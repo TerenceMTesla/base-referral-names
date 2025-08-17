@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DynamicAuth } from '@/components/DynamicAuth';
 import { Dashboard } from '@/components/Dashboard';
 import { DemoModeToggle } from '@/components/DemoModeToggle';
@@ -8,6 +8,11 @@ import { useAuth } from '@/hooks/useAuth';
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
   const [isDemoMode, setIsDemoMode] = useState(isAuthenticated);
+
+  useEffect(() => {
+    if(loading) return;
+    setIsDemoMode(isAuthenticated);
+  },[loading])
 
   if (loading) {
     return (
