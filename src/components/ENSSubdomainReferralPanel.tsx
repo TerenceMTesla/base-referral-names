@@ -11,7 +11,7 @@ import { useENSDetection } from '@/hooks/useENSDetection';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Globe, Users, Share2, CheckCircle, AlertTriangle, Sparkles, Crown, Loader2 } from 'lucide-react';
+import { Globe, Users, Share2, CheckCircle, AlertTriangle, Sparkles, Crown, Loader2, Link, Wallet, Plus, Copy } from 'lucide-react';
 
 interface ENSSubdomainReferralPanelProps {
   isDemoMode?: boolean;
@@ -26,6 +26,9 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
   const [landsOnUrl, setLandsOnUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [createdSubdomainReferral, setCreatedSubdomainReferral] = useState<any>(null);
+  const [walletAddress, setWalletAddress] = useState('');
+  const [referralCodes, setReferralCodes] = useState<any[]>([]);
+  const [generatingCode, setGeneratingCode] = useState(false);
 
   // Demo mode data
   const demoSubdomainData = {
@@ -132,6 +135,105 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateUniqueReferralCode = async () => {
+    if (!createdSubdomainReferral) return;
+
+    setGeneratingCode(true);
+    
+    if (isDemoMode) {
+      setTimeout(() => {
+        const newCode = {
+          id: 'code-' + Date.now(),
+          code: `${createdSubdomainReferral.metadata.community_name.toUpperCase().substr(0, 3)}${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
+          created_at: new Date().toISOString(),
+          clicks: 0,
+          wallet_address: null,
+          ens_domain: createdSubdomainReferral.subname,
+          is_active: true
+        };
+        
+        setReferralCodes(prev => [...prev, newCode]);
+        setGeneratingCode(false);
+        
+        toast({
+          title: "New referral code generated!",
+          description: `Code: ${newCode.code}`,
+        });
+      }, 1000);
+      return;
+    }
+
+    // Real implementation would generate via API
+    try {
+      const newCode = {
+        id: 'code-' + Date.now(),
+        code: `${createdSubdomainReferral.metadata.community_name.toUpperCase().substr(0, 3)}${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
+        created_at: new Date().toISOString(),
+        clicks: 0,
+        wallet_address: null,
+        ens_domain: createdSubdomainReferral.subname,
+        is_active: true
+      };
+      
+      setReferralCodes(prev => [...prev, newCode]);
+      
+      toast({
+        title: "New referral code generated!",
+        description: `Code: ${newCode.code}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Generation failed",
+        description: error.message || "Failed to generate referral code",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
+  const associateWallet = (codeId: string) => {
+    if (!walletAddress.trim()) {
+      toast({
+        title: "Missing wallet address",
+        description: "Please enter a wallet address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setReferralCodes(prev => prev.map(code => 
+      code.id === codeId 
+        ? { ...code, wallet_address: walletAddress.trim() }
+        : code
+    ));
+
+    toast({
+      title: "Wallet associated!",
+      description: `Wallet ${walletAddress.trim()} linked to referral code`,
+    });
+    
+    setWalletAddress('');
+  };
+
+  const copyReferralLink = (code: string) => {
+    const link = `${window.location.origin}?ref=${code}&community=${createdSubdomainReferral?.subname}`;
+    navigator.clipboard.writeText(link);
+    
+    toast({
+      title: "Link copied!",
+      description: "Referral link copied to clipboard",
+    });
+  };
+
+  const simulateClick = (codeId: string) => {
+    setReferralCodes(prev => prev.map(code => 
+      code.id === codeId 
+        ? { ...code, clicks: code.clicks + 1 }
+        : code
+    ));
   };
 
   if (isDemoMode) {
@@ -358,7 +460,7 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground">Referrals</p>
-                    <p className="text-lg font-bold text-ens-secondary">0</p>
+                    <p className="text-lg font-bold text-ens-secondary">{referralCodes.reduce((sum, code) => sum + code.clicks, 0)}</p>
                   </div>
                   <Share2 className="h-5 w-5 text-ens-secondary opacity-60" />
                 </div>
@@ -369,13 +471,115 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
               <CardContent className="pt-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted-foreground">Rewards Earned</p>
-                    <p className="text-lg font-bold text-ens-accent">0</p>
+                    <p className="text-xs text-muted-foreground">Active Codes</p>
+                    <p className="text-lg font-bold text-ens-accent">{referralCodes.length}</p>
                   </div>
-                  <Sparkles className="h-5 w-5 text-ens-accent opacity-60" />
+                  <Link className="h-5 w-5 text-ens-accent opacity-60" />
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Referral Code Generator Section */}
+          <div className="space-y-4 pt-4 border-t">
+            <h3 className="font-semibold text-ens-primary flex items-center gap-2">
+              <Link className="h-4 w-4" />
+              Referral Link Generator
+            </h3>
+            
+            <Button 
+              onClick={generateUniqueReferralCode}
+              disabled={generatingCode}
+              className="w-full"
+              variant="outline"
+            >
+              {generatingCode ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating Code...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Generate New Referral Code
+                </>
+              )}
+            </Button>
+
+            {/* Wallet Association */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter wallet address (0x...)"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                className="flex-1"
+              />
+              <Button 
+                onClick={() => referralCodes.length > 0 && associateWallet(referralCodes[referralCodes.length - 1]?.id)}
+                disabled={!walletAddress.trim() || referralCodes.length === 0}
+                variant="outline"
+              >
+                <Wallet className="h-4 w-4 mr-2" />
+                Associate Wallet
+              </Button>
+            </div>
+
+            {/* Referral Codes List */}
+            {referralCodes.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="font-medium text-sm">Generated Referral Codes</h4>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {referralCodes.map((code) => (
+                    <Card key={code.id} className="p-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <code className="bg-muted px-2 py-1 rounded text-xs font-mono">{code.code}</code>
+                            <Button
+                              onClick={() => copyReferralLink(code.code)}
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <Badge variant="secondary">{code.clicks} clicks</Badge>
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span>ENS Domain:</span>
+                            <span className="font-mono">{code.ens_domain}</span>
+                          </div>
+                          {code.wallet_address && (
+                            <div className="flex items-center justify-between">
+                              <span>Wallet:</span>
+                              <span className="font-mono">{code.wallet_address.slice(0, 6)}...{code.wallet_address.slice(-4)}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span>Created:</span>
+                            <span>{new Date(code.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        {/* Demo click simulator */}
+                        {isDemoMode && (
+                          <Button
+                            onClick={() => simulateClick(code.id)}
+                            size="sm"
+                            variant="outline"
+                            className="w-full mt-2"
+                          >
+                            Simulate Click (+1)
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
