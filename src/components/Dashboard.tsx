@@ -305,62 +305,63 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
       )}
       
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Referral Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back, {currentProfile?.display_name || 'User'}! Track your referrals and earn ENS subnames.
+      <div className="text-center space-y-4 mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          ENS Referrals Program
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Welcome back, {currentProfile?.display_name || 'User'}! Share your referral link and earn ENS subnames for every successful referral.
         </p>
       </div>
 
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card className="hover-scale transition-all duration-200 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Referrals</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{referrals.length}</div>
+            <div className="text-3xl font-bold text-primary">{referrals.length}</div>
             <p className="text-xs text-muted-foreground">
               All time referrals sent
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-scale transition-all duration-200 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Verified Referrals</CardTitle>
-            <Gift className="h-4 w-4 text-muted-foreground" />
+            <Gift className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{verifiedReferrals}</div>
+            <div className="text-3xl font-bold text-primary">{verifiedReferrals}</div>
             <p className="text-xs text-muted-foreground">
               Successful conversions
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-scale transition-all duration-200 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rewards Earned</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{rewardedReferrals}</div>
+            <div className="text-3xl font-bold text-primary">{rewardedReferrals}</div>
             <p className="text-xs text-muted-foreground">
               Referrals rewarded
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-scale transition-all duration-200 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">ENS Subnames</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalSubnames}</div>
+            <div className="text-3xl font-bold text-primary">{totalSubnames}</div>
             <p className="text-xs text-muted-foreground">
               NFT subnames owned
             </p>
@@ -369,44 +370,49 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="share" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="share" className="flex items-center gap-2">
+      <Tabs defaultValue="share" className="space-y-8">
+        <TabsList className="grid w-full grid-cols-5 h-12 rounded-xl bg-muted/50 p-1">
+          <TabsTrigger value="share" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Copy className="h-4 w-4" />
-            Share & Earn
+            <span className="hidden sm:inline">Share & Earn</span>
+            <span className="sm:hidden">Share</span>
           </TabsTrigger>
-          <TabsTrigger value="mint" className="flex items-center gap-2">
+          <TabsTrigger value="mint" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Award className="h-4 w-4" />
-            Mint NFTs
+            <span className="hidden sm:inline">Mint NFTs</span>
+            <span className="sm:hidden">Mint</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
+          <TabsTrigger value="analytics" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <TrendingUp className="h-4 w-4" />
-            Analytics
+            <span className="hidden sm:inline">Analytics</span>
+            <span className="sm:hidden">Stats</span>
           </TabsTrigger>
-          <TabsTrigger value="referrals" className="flex items-center gap-2">
+          <TabsTrigger value="referrals" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Users className="h-4 w-4" />
-            My Referrals
+            <span className="hidden sm:inline">My Referrals</span>
+            <span className="sm:hidden">Referrals</span>
           </TabsTrigger>
-          <TabsTrigger value="rewards" className="flex items-center gap-2">
+          <TabsTrigger value="rewards" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Gift className="h-4 w-4" />
-            Rewards
+            <span className="hidden sm:inline">Rewards</span>
+            <span className="sm:hidden">Rewards</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="share" className="space-y-6">
+        <TabsContent value="share" className="space-y-6 animate-fade-in">
           {/* Share Referral Link - Main focus at top of share tab */}
           <ReferralSharePanel isDemoMode={shouldUseDemoData} />
         </TabsContent>
 
-        <TabsContent value="mint" className="space-y-6">
+        <TabsContent value="mint" className="space-y-6 animate-fade-in">
           <SubnameMinting />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="analytics" className="space-y-6 animate-fade-in">
           <ReferralAnalytics />
         </TabsContent>
 
-        <TabsContent value="referrals" className="space-y-6">
+        <TabsContent value="referrals" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Referral Actions */}
             <Card>
@@ -527,7 +533,7 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="rewards">
+        <TabsContent value="rewards" className="space-y-6 animate-fade-in">
           <RewardsPanel />
         </TabsContent>
       </Tabs>
