@@ -101,10 +101,7 @@ serve(async (req) => {
       log('INFO', `[${requestId}] Attempting to find existing user by email`);
       
       try {
-        const { data: existingUsers, error: getUserError } = await supabaseAdmin.auth.admin.listUsers({
-          page: 1,
-          perPage: 1000
-        });
+        const { data: existingUsers, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
         
         if (getUserError) {
           log('WARN', `[${requestId}] Error listing users`, getUserError);
