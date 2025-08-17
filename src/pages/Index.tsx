@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
-  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(isAuthenticated);
 
   if (loading) {
     return (
