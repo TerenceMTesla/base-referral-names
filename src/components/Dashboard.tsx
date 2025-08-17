@@ -32,64 +32,18 @@ interface Subname {
   created_at: string;
 }
 
-// Demo data for when authentication fails or demo mode is enabled
-const getDemoData = () => ({
-  referrals: [
-    {
-      id: 'demo-1',
-      referral_code: 'DEMO123',
-      referred_email: 'john.doe@example.com',
-      status: 'verified' as const,
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      id: 'demo-2',
-      referral_code: 'DEMO456',
-      referred_email: 'jane.smith@example.com',
-      status: 'rewarded' as const,
-      created_at: new Date(Date.now() - 172800000).toISOString(),
-    },
-    {
-      id: 'demo-3',
-      referral_code: 'DEMO789',
-      referred_email: null,
-      status: 'pending' as const,
-      created_at: new Date(Date.now() - 3600000).toISOString(),
-    },
-  ],
-  subnames: [
-    {
-      id: 'demo-sub-1',
-      subname: 'rewards.eth',
-      referral_count: 5,
-      nft_token_id: 'token123',
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      id: 'demo-sub-2',
-      subname: 'social.eth',
-      referral_count: 3,
-      nft_token_id: 'token456',
-      created_at: new Date(Date.now() - 172800000).toISOString(),
-    },
-  ],
-  profile: {
-    id: 'demo-user',
-    user_id: 'demo-user',
-    email: 'demo@example.com',
-    wallet_address: '0x1234...5678',
-    dynamic_user_id: 'demo-dynamic',
-    display_name: 'Demo User',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
+// Empty data for real website start
+const getEmptyData = () => ({
+  referrals: [],
+  subnames: [],
+  profile: null,
 });
 
 interface DashboardProps {
-  isDemoMode?: boolean;
+  isLiveMode?: boolean;
 }
 
-export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
+export const Dashboard = ({ isLiveMode = true }: DashboardProps) => {
   const { profile, loading: authLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -99,26 +53,21 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
   const [referralCode, setReferralCode] = useState<string>('');
   const [useSimplified, setUseSimplified] = useState(true); // Default to simplified version
   
-  // Use demo data when in demo mode or when authentication fails
-  const shouldUseDemoData = isDemoMode || (!isAuthenticated && !authLoading);
-  const demoData = getDemoData();
-  const currentProfile = shouldUseDemoData ? demoData.profile : profile;
+  // Real website mode - require authentication
+  const emptyData = getEmptyData();
+  const currentProfile = profile;
 
   useEffect(() => {
-    if (shouldUseDemoData) {
-      // Load demo data immediately
-      setReferrals(demoData.referrals);
-      setSubnames(demoData.subnames);
+    if (profile && isAuthenticated) {
+      fetchDashboardData();
+    } else if (!authLoading && !isAuthenticated) {
+      // Start with empty data
+      setReferrals([]);
+      setSubnames([]);
       setLoading(false);
       setError(null);
-    } else if (profile) {
-      fetchDashboardData();
-    } else if (!authLoading) {
-      // Authentication failed, show error
-      setError('Authentication failed. Please try logging in again.');
-      setLoading(false);
     }
-  }, [profile, authLoading, shouldUseDemoData]);
+  }, [profile, authLoading, isAuthenticated]);
 
   const fetchDashboardData = async () => {
     if (!profile) return;
@@ -161,27 +110,10 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
   };
 
   const retryDataFetch = () => {
-    if (shouldUseDemoData) {
-      setReferrals(demoData.referrals);
-      setSubnames(demoData.subnames);
-      setLoading(false);
-      setError(null);
-    } else {
-      fetchDashboardData();
-    }
+    fetchDashboardData();
   };
 
   const generateReferralCode = async () => {
-    if (shouldUseDemoData) {
-      // Demo mode - simulate code generation
-      const demoCode = `DEMO${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-      setReferralCode(demoCode);
-      toast({
-        title: "Demo: Referral Code Generated",
-        description: `Your demo referral code: ${demoCode}`,
-      });
-      return;
-    }
 
     if (!profile) return;
 
@@ -223,7 +155,7 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
     navigator.clipboard.writeText(referralUrl);
     toast({
       title: "Copied!",
-      description: shouldUseDemoData ? "Demo referral link copied to clipboard." : "Referral link copied to clipboard.",
+      description: "Referral link copied to clipboard.",
     });
   };
 
@@ -239,7 +171,7 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
     );
   }
 
-  if (error && !shouldUseDemoData) {
+  if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <ErrorDisplay 
@@ -252,22 +184,22 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
     );
   }
 
-  // Show simplified version for both authenticated users and demo mode
-  if (useSimplified && (isAuthenticated || shouldUseDemoData)) {
+  // Show simplified version for authenticated users
+  if (useSimplified && isAuthenticated) {
     return (
       <div className="space-y-6">
-        {!shouldUseDemoData && <ReferralProcessor />}
-        <SimplifiedDashboard isDemoMode={shouldUseDemoData} />
+        <ReferralProcessor />
+        <SimplifiedDashboard />
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      {!shouldUseDemoData && <ReferralProcessor />}
+      <ReferralProcessor />
       
       {/* Performance Mode Toggle */}
-      {isAuthenticated && !shouldUseDemoData && (
+      {isAuthenticated && (
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
@@ -288,18 +220,6 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
             >
               Switch to {useSimplified ? 'Full' : 'Fast'} Mode
             </Button>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Demo Mode Indicator */}
-      {shouldUseDemoData && (
-        <Card className="border-accent bg-accent/10">
-          <CardContent className="flex items-center gap-2 p-4">
-            <AlertCircle className="h-5 w-5 text-accent-foreground" />
-            <p className="text-sm text-accent-foreground">
-              {isDemoMode ? 'Demo Mode: Viewing sample data' : 'Authentication unavailable: Showing demo data'}
-            </p>
           </CardContent>
         </Card>
       )}

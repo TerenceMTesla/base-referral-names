@@ -13,11 +13,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Globe, Users, Share2, CheckCircle, AlertTriangle, Sparkles, Crown, Loader2, Link, Wallet, Plus, Copy } from 'lucide-react';
 
-interface ENSSubdomainReferralPanelProps {
-  isDemoMode?: boolean;
-}
+interface ENSSubdomainReferralPanelProps {}
 
-export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainReferralPanelProps) => {
+export const ENSSubdomainReferralPanel = ({}: ENSSubdomainReferralPanelProps) => {
   const { ensDomain, hasENSDomain, loading: ensLoading } = useENSDetection();
   const { profile } = useAuth();
   const { toast } = useToast();
@@ -30,62 +28,8 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
   const [referralCodes, setReferralCodes] = useState<any[]>([]);
   const [generatingCode, setGeneratingCode] = useState(false);
 
-  // Demo mode data
-  const demoSubdomainData = {
-    subdomain: 'gaming.demo.eth',
-    description: 'Join our gaming community and earn exclusive NFT rewards!',
-    referralCode: 'GAMING123',
-    members: 247,
-    totalReferrals: 89,
-    activeToday: 12,
-    analytics: {
-      dailySignups: [5, 8, 12, 15, 11, 9, 12],
-      conversionRate: 78.5,
-      topReferrers: [
-        { name: 'GameMaster', referrals: 15 },
-        { name: 'ProGamer', referrals: 12 },
-        { name: 'NFTCollector', referrals: 8 }
-      ]
-    }
-  };
 
   const createSubdomainReferral = async () => {
-    if (isDemoMode) {
-      // Demo mode - simulate creation and store in localStorage
-      setLoading(true);
-      setTimeout(() => {
-        const demoData = {
-          id: 'demo-' + Date.now(),
-          subname: `${subdomain.toLowerCase().replace(/[^a-z0-9]/g, '')}.demo.eth`,
-          metadata: {
-            type: 'subdomain_referral',
-            description: description.trim(),
-            created_at: new Date().toISOString(),
-            ens_domain: 'demo.eth',
-            community_name: subdomain.trim(),
-            is_active: true,
-            referral_code: `${subdomain.toUpperCase().substr(0, 3)}${Math.random().toString(36).substr(2, 3).toUpperCase()}`,
-            members: 1,
-            totalReferrals: 0,
-            lands_on_url: landsOnUrl.trim() || null
-          }
-        };
-        
-        // Store in localStorage for demo persistence
-        const demoReferrals = JSON.parse(localStorage.getItem('demoSubdomainReferrals') || '[]');
-        demoReferrals.push(demoData);
-        localStorage.setItem('demoSubdomainReferrals', JSON.stringify(demoReferrals));
-        
-        setCreatedSubdomainReferral(demoData);
-        setLoading(false);
-        
-        toast({
-          title: "Demo: Community created!",
-          description: `Your ${subdomain} demo community is now active`,
-        });
-      }, 1500);
-      return;
-    }
 
     if (!ensDomain?.name || !subdomain.trim()) {
       toast({
@@ -142,28 +86,6 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
 
     setGeneratingCode(true);
     
-    if (isDemoMode) {
-      setTimeout(() => {
-        const newCode = {
-          id: 'code-' + Date.now(),
-          code: `${createdSubdomainReferral.metadata.community_name.toUpperCase().substr(0, 3)}${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
-          created_at: new Date().toISOString(),
-          clicks: 0,
-          wallet_address: null,
-          ens_domain: createdSubdomainReferral.subname,
-          is_active: true
-        };
-        
-        setReferralCodes(prev => [...prev, newCode]);
-        setGeneratingCode(false);
-        
-        toast({
-          title: "New referral code generated!",
-          description: `Code: ${newCode.code}`,
-        });
-      }, 1000);
-      return;
-    }
 
     // Real implementation would generate via API
     try {
@@ -236,118 +158,6 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
     ));
   };
 
-  if (isDemoMode) {
-    return (
-      <Card className="p-6 mb-6 border-accent bg-accent/10">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Crown className="h-5 w-5 text-primary" />
-            ENS Subdomain Community
-          </CardTitle>
-          <CardDescription>
-            Demo mode: Create and manage your ENS subdomain referral community
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Existing demo community */}
-            <div className="space-y-4">
-              <h3 className="font-semibold">Your Active Community</h3>
-              <Card className="p-4 border-2 border-primary/20">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{demoSubdomainData.subdomain}</h4>
-                    <Badge variant="secondary">Active</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{demoSubdomainData.description}</p>
-                  
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div>
-                      <div className="text-lg font-bold text-primary">{demoSubdomainData.members}</div>
-                      <div className="text-xs text-muted-foreground">Members</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-primary">{demoSubdomainData.totalReferrals}</div>
-                      <div className="text-xs text-muted-foreground">Referrals</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-primary">{demoSubdomainData.activeToday}</div>
-                      <div className="text-xs text-muted-foreground">Today</div>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-2 border-t">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Referral Code:</span>
-                      <code className="bg-muted px-2 py-1 rounded text-xs font-mono">{demoSubdomainData.referralCode}</code>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Create new community form */}
-            <div className="space-y-4">
-              <h3 className="font-semibold">Create New Community</h3>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="subdomain">Community Name</Label>
-                  <Input
-                    id="subdomain"
-                    placeholder="e.g., gaming, defi, art"
-                    value={subdomain}
-                    onChange={(e) => setSubdomain(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Will create: {subdomain ? `${subdomain.toLowerCase()}.demo.eth` : 'yourname.demo.eth'}
-                  </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="landsOnUrl">Lands On (Optional)</Label>
-                  <Input
-                    id="landsOnUrl"
-                    placeholder="https://yourwebsite.com or app.yourname.com"
-                    value={landsOnUrl}
-                    onChange={(e) => setLandsOnUrl(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Where visitors to {subdomain ? `${subdomain.toLowerCase()}.demo.eth` : 'your subdomain'} will be redirected
-                  </p>
-                </div>
-                
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe your community and its benefits"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={3}
-                  />
-                </div>
-                
-                <Button 
-                  onClick={createSubdomainReferral}
-                  disabled={loading || !subdomain.trim()}
-                  className="w-full"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating Community...
-                    </>
-                  ) : (
-                    'Create Demo Community'
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   // Loading state
   if (ensLoading) {
@@ -563,17 +373,6 @@ export const ENSSubdomainReferralPanel = ({ isDemoMode = false }: ENSSubdomainRe
                           </div>
                         </div>
 
-                        {/* Demo click simulator */}
-                        {isDemoMode && (
-                          <Button
-                            onClick={() => simulateClick(code.id)}
-                            size="sm"
-                            variant="outline"
-                            className="w-full mt-2"
-                          >
-                            Simulate Click (+1)
-                          </Button>
-                        )}
                       </div>
                     </Card>
                   ))}

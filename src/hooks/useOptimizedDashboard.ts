@@ -33,62 +33,25 @@ export const useOptimizedDashboard = (isDemoMode = false) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Demo data for testing
-  const getDemoData = useCallback((): DashboardData => ({
-    referrals: [
-      {
-        id: 'demo-1',
-        referral_code: 'DEMO123',
-        referred_email: 'john.doe@example.com',
-        status: 'verified' as const,
-        created_at: new Date(Date.now() - 86400000).toISOString(),
-      },
-      {
-        id: 'demo-2',
-        referral_code: 'DEMO456',
-        referred_email: 'jane.smith@example.com',
-        status: 'rewarded' as const,
-        created_at: new Date(Date.now() - 172800000).toISOString(),
-      },
-      {
-        id: 'demo-3',
-        referral_code: 'DEMO789',
-        referred_email: null,
-        status: 'pending' as const,
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-      },
-    ],
-    subnames: [
-      {
-        id: 'demo-sub-1',
-        subname: 'rewards.eth',
-        referral_count: 5,
-        nft_token_id: 'token123',
-        created_at: new Date(Date.now() - 86400000).toISOString(),
-      },
-      {
-        id: 'demo-sub-2',
-        subname: 'social.eth',
-        referral_count: 3,
-        nft_token_id: 'token456',
-        created_at: new Date(Date.now() - 172800000).toISOString(),
-      },
-    ],
+  // Empty data for real app start
+  const getEmptyData = useCallback((): DashboardData => ({
+    referrals: [],
+    subnames: [],
     stats: {
-      totalReferrals: 3,
-      verifiedReferrals: 1,
-      pendingReferrals: 1,
-      subnamesCount: 2
+      totalReferrals: 0,
+      verifiedReferrals: 0,
+      pendingReferrals: 0,
+      subnamesCount: 0
     }
   }), []);
 
   // Optimized single query for essential data
   const fetchEssentialData = useCallback(async () => {
     if (isDemoMode) {
-      // Use demo data
+      // Use empty data for real app
       setLoading(true);
       setTimeout(() => {
-        setData(getDemoData());
+        setData(getEmptyData());
         setLoading(false);
         setError(null);
       }, 500); // Simulate loading
@@ -152,7 +115,7 @@ export const useOptimizedDashboard = (isDemoMode = false) => {
     } finally {
       setLoading(false);
     }
-  }, [isDemoMode, profile?.id, get, set, getDemoData]);
+  }, [isDemoMode, profile?.id, get, set, getEmptyData]);
 
   // Refresh function that invalidates cache
   const refresh = useCallback(() => {
