@@ -68,7 +68,7 @@ interface SubnameMintingProps {
 }
 
 export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
-  const { profile } = useAuth();
+  const { profile, isAuthenticated, user } = useAuth();
   const { connectToBase, mintSubnameNFT, checkWalletConnection, loading } = useSmartContract();
   const { toast } = useToast();
   
@@ -165,6 +165,15 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
       toast({
         title: "Invalid input",
         description: "Please select a tier and enter a custom prefix.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!isAuthenticated || !profile) {
+      toast({
+        title: "Not authenticated",
+        description: "Please sign in with your wallet to mint NFTs.",
         variant: "destructive",
       });
       return;
@@ -409,7 +418,7 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
 
             <Button
               onClick={handleMintSubname}
-              disabled={!selectedTier || !customPrefix || !validatePrefix(customPrefix) || !walletConnected || loading}
+              disabled={!selectedTier || !customPrefix || !validatePrefix(customPrefix) || !walletConnected || !isAuthenticated || loading}
               className="w-full"
             >
               {loading ? (
@@ -422,7 +431,12 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
               )}
             </Button>
 
-            {!walletConnected && (
+            {!isAuthenticated && (
+              <p className="text-xs text-destructive text-center">
+                Please sign in with your wallet first
+              </p>
+            )}
+            {isAuthenticated && !walletConnected && (
               <p className="text-xs text-muted-foreground text-center">
                 Connect your wallet to Base network to mint
               </p>

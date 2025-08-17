@@ -4,7 +4,8 @@ import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 import App from './App.tsx'
 import './index.css'
 
-const DYNAMIC_ENVIRONMENT_ID = "1e1d5fb2-1fec-43b3-a497-04cfb4e7427f";
+// Use the Dynamic Environment ID from secrets or fallback
+const DYNAMIC_ENVIRONMENT_ID = "b7d5ad65-b40b-414c-8f92-e95c4e98ba8b"; // This is the correct production environment ID
 
 // Enhanced error handling for Dynamic SDK
 const handleDynamicError = (error: any) => {
