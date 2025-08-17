@@ -49,7 +49,7 @@ const Index = () => {
               </h1>
             </div>
             <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-              Earn exclusive ENS subname NFTs by referring friends to the Ethereum Name Service ecosystem
+              Earn exclusive ENS subname NFTs and custom rewards by referring friends to the Ethereum Name Service ecosystem
             </p>
           </header>
 
