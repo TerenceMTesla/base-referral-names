@@ -44,6 +44,22 @@ export const ReferralProcessor = () => {
         if (referralError) throw referralError;
 
         if (!referralData) {
+          // Check if it's a demo code
+          if (storedReferralCode.startsWith('DEMO') || storedReferralCode.startsWith('GAM') || 
+              storedReferralCode.startsWith('DEF') || storedReferralCode.startsWith('ART')) {
+            // Process demo referral
+            const community = localStorage.getItem('referralCommunity');
+            toast({
+              title: "Demo referral processed!",
+              description: community 
+                ? `Welcome to the ${community} demo community!`
+                : "Demo referral completed successfully!",
+            });
+            localStorage.removeItem('referralCode');
+            localStorage.removeItem('referralCommunity');
+            return;
+          }
+          
           toast({
             title: "Invalid referral code",
             description: "The referral code you used is no longer valid.",

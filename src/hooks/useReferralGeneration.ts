@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
-export const useReferralGeneration = (isDemoMode = false) => {
+export const useReferralGeneration = (isDemoMode = false, communitySubdomain?: string) => {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -13,13 +13,18 @@ export const useReferralGeneration = (isDemoMode = false) => {
 
   useEffect(() => {
     if (isDemoMode) {
-      // Set demo data immediately
-      setReferralCode('DEMO123');
-      setReferralLink(`${window.location.origin}/?ref=DEMO123`);
+      // Set demo data based on community or default
+      const demoCode = communitySubdomain ? `${communitySubdomain.toUpperCase().substr(0, 3)}123` : 'DEMO123';
+      const demoLink = communitySubdomain 
+        ? `${window.location.origin}/?ref=${demoCode}&community=${communitySubdomain}`
+        : `${window.location.origin}/?ref=${demoCode}`;
+      
+      setReferralCode(demoCode);
+      setReferralLink(demoLink);
     } else if (profile?.id) {
       fetchExistingReferralCode();
     }
-  }, [profile?.id, isDemoMode]);
+  }, [profile?.id, isDemoMode, communitySubdomain]);
 
   const fetchExistingReferralCode = async () => {
     if (!profile?.id || isDemoMode) return;
@@ -47,13 +52,19 @@ export const useReferralGeneration = (isDemoMode = false) => {
 
   const generateReferralCode = async () => {
     if (isDemoMode) {
-      // Demo mode simulation
-      const demoCode = `DEMO${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      // Demo mode simulation with community support
+      const prefix = communitySubdomain ? communitySubdomain.toUpperCase().substr(0, 3) : 'DEMO';
+      const demoCode = `${prefix}${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      const demoLink = communitySubdomain 
+        ? `${window.location.origin}/?ref=${demoCode}&community=${communitySubdomain}`
+        : `${window.location.origin}/?ref=${demoCode}`;
+      
       setReferralCode(demoCode);
-      setReferralLink(`${window.location.origin}/?ref=${demoCode}`);
+      setReferralLink(demoLink);
+      
       toast({
-        title: "Demo: Referral code generated!",
-        description: "Your demo referral link is ready to share.",
+        title: communitySubdomain ? `Demo: ${communitySubdomain} referral created!` : "Demo: Referral code generated!",
+        description: communitySubdomain ? `Your ${communitySubdomain} community referral link is ready` : "Your demo referral link is ready to share.",
       });
       return;
     }
@@ -151,11 +162,16 @@ export const useReferralGeneration = (isDemoMode = false) => {
   const shareToSocial = (platform: 'twitter' | 'telegram' | 'whatsapp') => {
     if (!referralLink) return;
 
-    const message = `Join me on EZVERSE and earn exclusive ENS subname NFTs! Use my link to get started: ${referralLink}`;
+    const communityText = communitySubdomain ? ` Join our ${communitySubdomain} community and` : '';
+    const message = `${communityText} Join me on EZVERSE and earn exclusive ENS subname NFTs! Use my link to get started: ${referralLink}`;
+    
+    const shareText = communitySubdomain 
+      ? `Join our ${communitySubdomain} community on EZVERSE!`
+      : 'Join me on EZVERSE and earn exclusive ENS subname NFTs!';
     
     const urls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('Join me on EZVERSE and earn exclusive ENS subname NFTs!')}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(message)}`
     };
 

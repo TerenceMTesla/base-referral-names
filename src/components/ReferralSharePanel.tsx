@@ -9,6 +9,7 @@ import { AnimatedCounter } from './AnimatedCounter';
 import { AchievementBadge } from './AchievementBadge';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
 import { ENSSubdomainReferralPanel } from './ENSSubdomainReferralPanel';
+import { DemoSubdomainDashboard } from './DemoSubdomainDashboard';
 
 interface ReferralSharePanelProps {
   isDemoMode?: boolean;
@@ -29,8 +30,23 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
 
   return (
     <div className="space-y-6">
-      {/* ENS Subdomain Community Panel */}
+      {/* ENS Subdomain Referral Panel */}
       <ENSSubdomainReferralPanel isDemoMode={isDemoMode} />
+
+      {/* Demo Subdomain Dashboard */}
+      {isDemoMode && (
+        <Card className="p-6 mb-6">
+          <CardHeader>
+            <CardTitle>ENS Subdomain Communities Dashboard</CardTitle>
+            <CardDescription>
+              Demo: Manage your ENS subdomain referral communities and track their performance
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DemoSubdomainDashboard />
+          </CardContent>
+        </Card>
+      )}
       
       {/* Live Stats Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

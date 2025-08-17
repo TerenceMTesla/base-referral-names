@@ -10,15 +10,34 @@ export const useReferralTracking = () => {
 
   useEffect(() => {
     const ref = searchParams.get('ref');
+    const community = searchParams.get('community');
+    
     if (ref) {
       setReferralCode(ref);
-      // Store in localStorage for later use during signup
+      // Store both referral code and community info
       localStorage.setItem('referralCode', ref);
+      if (community) {
+        localStorage.setItem('referralCommunity', community);
+      }
       
-      toast({
-        title: "Referral detected!",
-        description: `You'll be linked to referrer after signing up. Code: ${ref}`,
-      });
+      // Handle demo referrals
+      if (ref.startsWith('DEMO') || ref.startsWith('GAM') || ref.startsWith('DEF') || ref.startsWith('ART')) {
+        const communityText = community ? ` to the ${community} community` : '';
+        toast({
+          title: "Demo referral detected!",
+          description: `Welcome${communityText}! This is a demo experience. Code: ${ref}`,
+        });
+        
+        // Simulate demo signup process
+        setTimeout(() => {
+          processDemoReferral(ref, community);
+        }, 2000);
+      } else {
+        toast({
+          title: "Referral detected!",
+          description: `You'll be linked to referrer after signing up. Code: ${ref}`,
+        });
+      }
     }
   }, [searchParams, toast]);
 
@@ -166,6 +185,39 @@ export const useReferralTracking = () => {
       });
 
     if (error) throw error;
+  };
+
+  const processDemoReferral = (code: string, community?: string) => {
+    // Update demo stats in localStorage
+    const demoStats = JSON.parse(localStorage.getItem('demoReferralStats') || '{}');
+    const communityKey = community || 'general';
+    
+    if (!demoStats[communityKey]) {
+      demoStats[communityKey] = {
+        totalReferrals: 0,
+        verifiedReferrals: 0,
+        members: 1,
+        recentSignups: []
+      };
+    }
+    
+    demoStats[communityKey].totalReferrals += 1;
+    demoStats[communityKey].verifiedReferrals += 1;
+    demoStats[communityKey].members += 1;
+    demoStats[communityKey].recentSignups.push({
+      code,
+      timestamp: new Date().toISOString(),
+      community
+    });
+    
+    localStorage.setItem('demoReferralStats', JSON.stringify(demoStats));
+    
+    toast({
+      title: "Demo referral processed!",
+      description: community 
+        ? `You've joined the ${community} community successfully!`
+        : "Demo referral completed successfully!",
+    });
   };
 
   return {

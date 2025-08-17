@@ -26,7 +26,15 @@ export const useReferralValidation = () => {
   });
 
   const validateReferralCode = useCallback(async (code: string): Promise<boolean> => {
-    if (!code || code.length !== 8) return false;
+    if (!code) return false;
+
+    // Handle demo codes
+    if (code.startsWith('DEMO') || code.startsWith('GAM') || code.startsWith('DEF') || code.startsWith('ART')) {
+      return true;
+    }
+
+    // Standard validation for real codes
+    if (code.length !== 8) return false;
 
     try {
       const { data, error } = await supabase
