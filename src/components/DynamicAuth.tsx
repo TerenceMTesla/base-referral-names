@@ -1,14 +1,29 @@
+import { useState } from 'react';
 import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { ErrorDisplay } from '@/components/ui/error-boundary';
 
 export const DynamicAuth = () => {
   const { user, isAuthenticated, loading } = useAuth();
+  const [debugMode, setDebugMode] = useState(false);
+  const [fallbackAuth, setFallbackAuth] = useState(false);
+
+  console.log('DynamicAuth render:', { user, isAuthenticated, loading, fallbackAuth });
 
   // Handle Dynamic SDK initialization errors gracefully
   const handleRetry = () => {
+    console.log('Retrying authentication...');
     window.location.reload();
+  };
+
+  // Fallback authentication for testing
+  const handleFallbackAuth = () => {
+    console.log('Using fallback authentication');
+    setFallbackAuth(true);
+    // Simulate successful authentication for testing
+    localStorage.setItem('fallback_auth', 'true');
   };
 
   if (loading) {
@@ -37,6 +52,46 @@ export const DynamicAuth = () => {
             <p><strong>User ID:</strong> {user.userId}</p>
           </div>
           <DynamicWidget />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setDebugMode(!debugMode)}
+          >
+            {debugMode ? 'Hide' : 'Show'} Debug Info
+          </Button>
+          {debugMode && (
+            <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
+              <pre>{JSON.stringify({ user, isAuthenticated, loading }, null, 2)}</pre>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (fallbackAuth || localStorage.getItem('fallback_auth')) {
+    return (
+      <Card className="w-full max-w-md mx-auto border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
+        <CardHeader>
+          <CardTitle className="text-accent">Demo Mode Active</CardTitle>
+          <CardDescription className="text-accent/80">Using fallback authentication for testing</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-sm text-accent/70 space-y-1">
+            <p><strong>Mode:</strong> Demo/Testing</p>
+            <p><strong>Auth:</strong> Fallback Active</p>
+          </div>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={() => {
+              setFallbackAuth(false);
+              localStorage.removeItem('fallback_auth');
+              window.location.reload();
+            }}
+          >
+            Reset Authentication
+          </Button>
         </CardContent>
       </Card>
     );
@@ -56,8 +111,20 @@ export const DynamicAuth = () => {
             <DynamicWidget />
           </div>
         </div>
-        <div className="text-xs text-muted-foreground text-center">
-          If authentication doesn't load, try refreshing the page
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground text-center">
+            If authentication doesn't load, try refreshing the page
+          </div>
+          <div className="flex justify-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleFallbackAuth}
+              className="text-xs"
+            >
+              Use Demo Mode (Testing)
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -24,9 +24,12 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  console.log('useAuth state:', { user: !!user, profile: !!profile, session: !!session, loading });
+
   const authenticateWithDynamic = async (dynamicUser: any) => {
     try {
       console.log('Authenticating with Dynamic user:', dynamicUser.userId);
+      console.log('Dynamic user data:', dynamicUser);
       
       // Call our edge function to handle Dynamic authentication
       const { data, error } = await supabase.functions.invoke('dynamic-auth', {
@@ -166,11 +169,14 @@ export const useAuth = () => {
     handleAuthState();
   }, [user]);
 
+  // Check for fallback authentication
+  const fallbackAuth = localStorage.getItem('fallback_auth') === 'true';
+  
   return {
     user,
     profile,
     session,
-    isAuthenticated: !!user && !!profile && !!session,
-    loading,
+    isAuthenticated: !!user && !!profile && !!session || fallbackAuth,
+    loading: loading && !fallbackAuth,
   };
 };
