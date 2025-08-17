@@ -21,6 +21,16 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-background p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
+          {/* Header with Auth Toggle */}
+          <div className="mb-6 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <ENSLogo size="md" />
+              <h1 className="text-2xl md:text-3xl font-bold text-gradient">ENS Referrals Dashboard</h1>
+            </div>
+            <div className="max-w-xs">
+              <DynamicAuth />
+            </div>
+          </div>
           <Dashboard />
         </div>
       </div>
