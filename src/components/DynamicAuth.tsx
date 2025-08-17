@@ -18,7 +18,25 @@ export const DynamicAuth = () => {
 
   // Check for Dynamic SDK connection errors
   useEffect(() => {
-    // Listen for Dynamic SDK errors
+    let errorDetected = false;
+    
+    // Listen for network errors from Dynamic SDK
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+      return originalFetch.apply(this, args).catch((error) => {
+        // Check if this is a Dynamic Labs API call that failed
+        if (args[0] && typeof args[0] === 'string' && args[0].includes('dynamicauth.com')) {
+          console.error('Dynamic SDK network error:', error);
+          if (!errorDetected) {
+            errorDetected = true;
+            setTimeout(() => setHasConnectionError(true), 1000);
+          }
+        }
+        throw error;
+      });
+    };
+
+    // Also check for existing console errors
     const checkForErrors = () => {
       const errorMessages = [
         'Failed to fetch',
@@ -31,14 +49,32 @@ export const DynamicAuth = () => {
         return window.console && document.documentElement.innerHTML.includes('DynamicSDK] [ERROR]');
       });
       
-      if (hasError) {
+      if (hasError && !errorDetected) {
+        errorDetected = true;
         setHasConnectionError(true);
       }
     };
 
-    const timer = setTimeout(checkForErrors, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Check immediately and after delays
+    const timer1 = setTimeout(checkForErrors, 2000);
+    const timer2 = setTimeout(checkForErrors, 5000);
+    
+    // If still loading after 10 seconds, assume connection error
+    const timer3 = setTimeout(() => {
+      if (loading && !isAuthenticated && !errorDetected) {
+        console.warn('Dynamic SDK taking too long to initialize, showing error state');
+        errorDetected = true;
+        setHasConnectionError(true);
+      }
+    }, 10000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      window.fetch = originalFetch; // Restore original fetch
+    };
+  }, [loading, isAuthenticated]);
 
   if (loading) {
     return (
