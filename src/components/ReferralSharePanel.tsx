@@ -10,6 +10,7 @@ import { AchievementBadge } from './AchievementBadge';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
 import { ENSSubdomainReferralPanel } from './ENSSubdomainReferralPanel';
 import { DemoSubdomainDashboard } from './DemoSubdomainDashboard';
+import { ReferralLinksManager } from './ReferralLinksManager';
 
 interface ReferralSharePanelProps {
   isDemoMode?: boolean;
@@ -30,6 +31,9 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
 
   return (
     <div className="space-y-6">
+      {/* Multiple Referral Links Manager */}
+      <ReferralLinksManager isDemoMode={isDemoMode} />
+
       {/* ENS Subdomain Referral Panel */}
       <ENSSubdomainReferralPanel isDemoMode={isDemoMode} />
 

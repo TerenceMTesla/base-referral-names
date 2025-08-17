@@ -49,8 +49,12 @@ export type Database = {
       }
       referrals: {
         Row: {
+          campaign_name: string | null
+          click_count: number
           created_at: string
+          description: string | null
           id: string
+          is_active: boolean
           referral_code: string
           referred_email: string | null
           referred_id: string | null
@@ -60,8 +64,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          campaign_name?: string | null
+          click_count?: number
           created_at?: string
+          description?: string | null
           id?: string
+          is_active?: boolean
           referral_code: string
           referred_email?: string | null
           referred_id?: string | null
@@ -71,8 +79,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          campaign_name?: string | null
+          click_count?: number
           created_at?: string
+          description?: string | null
           id?: string
+          is_active?: boolean
           referral_code?: string
           referred_email?: string | null
           referred_id?: string | null
