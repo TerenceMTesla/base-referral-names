@@ -3,6 +3,8 @@ import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
 import App from './App.tsx'
 import './index.css'
 
+// You need to replace this with your own Dynamic Labs environment ID
+// Get it from: https://app.dynamic.xyz/dashboard/developer
 const DYNAMIC_ENVIRONMENT_ID = "fe84593e-fefc-4303-aed9-099ee46cf8a9";
 
 // Enhanced error handling for Dynamic SDK
