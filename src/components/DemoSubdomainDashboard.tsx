@@ -2,13 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useSubdomainData } from '@/hooks/useSubdomainData';
+import { useDemoSubdomainData } from '@/hooks/useDemoSubdomainData';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { Share2, Users, TrendingUp, Trophy, Copy, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export const SubdomainDashboard = () => {
-  const { communities, getCommunityByReferralCode } = useSubdomainData();
+export const DemoSubdomainDashboard = () => {
+  const { communities, getCommunityByReferralCode } = useDemoSubdomainData();
   const { toast } = useToast();
 
   const totalMembers = communities.reduce((sum, c) => sum + c.members, 0);

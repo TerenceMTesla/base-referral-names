@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { ErrorDisplay } from '@/components/ui/error-boundary';
 
