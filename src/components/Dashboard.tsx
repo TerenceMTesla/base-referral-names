@@ -312,10 +312,6 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
         </p>
       </div>
 
-      {/* Share Referral Link - Moved to top for better visibility */}
-      <div className="space-y-6">
-        <ReferralSharePanel isDemoMode={shouldUseDemoData} />
-      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -398,7 +394,8 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
         </TabsList>
 
         <TabsContent value="share" className="space-y-6">
-          <ReferralSharePanel />
+          {/* Share Referral Link - Main focus at top of share tab */}
+          <ReferralSharePanel isDemoMode={shouldUseDemoData} />
         </TabsContent>
 
         <TabsContent value="mint" className="space-y-6">
