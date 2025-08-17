@@ -136,7 +136,7 @@ export const useReferralValidation = () => {
       // Generate final subname
       const prefix = customPrefix || profile.display_name?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user';
       const tier = metadata.tier;
-      const finalSubname = `${prefix}.${tier}.ezverse.eth`;
+      const finalSubname = `${prefix}.${tier}.ezens.eth`;
 
       // Check if subname is available
       const { data: existing } = await supabase
@@ -147,7 +147,7 @@ export const useReferralValidation = () => {
         .maybeSingle();
 
       if (existing) {
-        const uniqueSubname = `${prefix}-${Date.now()}.${tier}.ezverse.eth`;
+        const uniqueSubname = `${prefix}-${Date.now()}.${tier}.ezens.eth`;
         await updateSubnameRecord(subnameId, uniqueSubname);
       } else {
         await updateSubnameRecord(subnameId, finalSubname);

@@ -45,7 +45,7 @@ const Index = () => {
             <div className="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6">
               <ENSLogo className="w-12 h-12 md:w-16 md:h-16" />
               <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
-                ENS Referrals
+                EZ ENS Referrals
               </h1>
             </div>
             <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">

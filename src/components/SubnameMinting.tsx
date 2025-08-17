@@ -25,7 +25,7 @@ const MINTING_TIERS: MintingTier[] = [
     threshold: 1,
     tierName: 'Starter',
     suffix: 'starter',
-    description: 'Your first EZVERSE subname',
+    description: 'Your first ezens.eth subname',
     rarity: 'common',
     color: 'bg-gray-100'
   },
@@ -152,7 +152,7 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
   };
 
   const generateFullSubname = (prefix: string, tier: MintingTier) => {
-    return `${prefix}.${tier.suffix}.ezverse.eth`;
+    return `${prefix}.${tier.suffix}.ezens.eth`;
   };
 
   const handleConnectWallet = async () => {
@@ -376,7 +376,7 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
               Mint Your Subname NFT
             </CardTitle>
             <CardDescription>
-              Create your personalized EZVERSE.eth subname
+              Create your personalized ezens.eth subname
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -450,7 +450,7 @@ export const SubnameMinting = ({ isDemoMode = false }: SubnameMintingProps) => {
           <CardHeader>
             <CardTitle>Your Minted Subnames</CardTitle>
             <CardDescription>
-              EZVERSE.eth subnames you've successfully minted
+              ezens.eth subnames you've successfully minted
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -58,11 +58,11 @@ export const ReferralLinksManager = ({ isDemoMode = false }: ReferralLinksManage
 
   const shareToSocial = (code: string, platform: 'twitter' | 'telegram' | 'whatsapp') => {
     const link = getReferralLink(code);
-    const message = `Join me on EZVERSE and earn exclusive ENS subname NFTs! Use my link: ${link}`;
+    const message = `Join me on ezens.eth and earn exclusive ENS subname NFTs! Use my link: ${link}`;
     
     const urls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join me on EZVERSE!')}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join me on ezens.eth!')}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(message)}`
     };
 

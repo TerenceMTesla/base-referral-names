@@ -163,11 +163,11 @@ export const useReferralGeneration = (isDemoMode = false, communitySubdomain?: s
     if (!referralLink) return;
 
     const communityText = communitySubdomain ? ` Join our ${communitySubdomain} community and` : '';
-    const message = `${communityText} Join me on EZVERSE and earn exclusive ENS subname NFTs! Use my link to get started: ${referralLink}`;
+    const message = `${communityText} Join me on ezens.eth and earn exclusive ENS subname NFTs! Use my link to get started: ${referralLink}`;
     
     const shareText = communitySubdomain 
-      ? `Join our ${communitySubdomain} community on EZVERSE!`
-      : 'Join me on EZVERSE and earn exclusive ENS subname NFTs!';
+      ? `Join our ${communitySubdomain} community on ezens.eth!`
+      : 'Join me on ezens.eth and earn exclusive ENS subname NFTs!';
     
     const urls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,

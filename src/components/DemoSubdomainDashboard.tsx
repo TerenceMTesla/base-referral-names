@@ -26,7 +26,7 @@ export const DemoSubdomainDashboard = () => {
 
   const shareToTwitter = (referralCode: string, communityName: string) => {
     const link = `${window.location.origin}/?ref=${referralCode}&community=${communityName.toLowerCase()}`;
-    const message = `Join our ${communityName} community on EZVERSE and earn exclusive NFTs! ${link}`;
+    const message = `Join our ${communityName} community on ezens.eth and earn exclusive NFTs! ${link}`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
   };
 

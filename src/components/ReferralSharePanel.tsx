@@ -104,7 +104,7 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
             Share Your Referral Link
           </CardTitle>
           <CardDescription>
-            Generate your unique EZVERSE referral link and start earning exclusive ENS subname NFT rewards
+            Generate your unique ezens.eth referral link and start earning exclusive ENS subname NFT rewards
           </CardDescription>
         </CardHeader>
       <CardContent className="space-y-4">
@@ -124,7 +124,7 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
         {!error && !referralCode ? (
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">
-              Generate your referral code to start inviting friends to EZVERSE
+              Generate your referral code to start inviting friends to ezens.eth
             </p>
             <Button 
               onClick={generateReferralCode} 
@@ -230,11 +230,11 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
               <ul className="text-sm space-y-2">
                 <li className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-ens-primary rounded-full animate-pulse-slow" />
-                  Share your EZVERSE referral link with friends
+                  Share your ezens.eth referral link with friends
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-ens-secondary rounded-full animate-pulse-slow" style={{ animationDelay: '0.5s' }} />
-                  They join EZVERSE using your link
+                  They join ezens.eth using your link
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-ens-accent rounded-full animate-pulse-slow" style={{ animationDelay: '1s' }} />
@@ -242,7 +242,7 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-ens-primary to-ens-secondary rounded-full animate-pulse-slow" style={{ animationDelay: '1.5s' }} />
-                  <span className="font-medium">1st, 5th, 10th, 20th, and 50th referrals unlock legendary EZVERSE rewards!</span>
+                  <span className="font-medium">1st, 5th, 10th, 20th, and 50th referrals unlock legendary EZENS rewards!</span>
                 </li>
               </ul>
             </div>
