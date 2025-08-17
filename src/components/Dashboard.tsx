@@ -371,48 +371,88 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="share" className="space-y-8">
-        <TabsList className="grid w-full grid-cols-5 h-12 rounded-xl bg-muted/50 p-1">
+        <TabsList className="grid w-full grid-cols-4 h-12 rounded-xl bg-muted/50 p-1">
           <TabsTrigger value="share" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Copy className="h-4 w-4" />
-            <span className="hidden sm:inline">Share & Earn</span>
+            <span className="hidden sm:inline">Share Your Referral Link</span>
             <span className="sm:hidden">Share</span>
           </TabsTrigger>
-          <TabsTrigger value="mint" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
-            <Award className="h-4 w-4" />
-            <span className="hidden sm:inline">Mint NFTs</span>
-            <span className="sm:hidden">Mint</span>
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
-            <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">Analytics</span>
-            <span className="sm:hidden">Stats</span>
-          </TabsTrigger>
-          <TabsTrigger value="referrals" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+          <TabsTrigger value="community" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">My Referrals</span>
-            <span className="sm:hidden">Referrals</span>
+            <span className="hidden sm:inline">ENS Subdomain Community</span>
+            <span className="sm:hidden">Community</span>
           </TabsTrigger>
-          <TabsTrigger value="rewards" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
-            <Gift className="h-4 w-4" />
-            <span className="hidden sm:inline">Rewards</span>
-            <span className="sm:hidden">Rewards</span>
+          <TabsTrigger value="dashboard" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden sm:inline">Communities Dashboard</span>
+            <span className="sm:hidden">Dashboard</span>
+          </TabsTrigger>
+          <TabsTrigger value="manager" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+            <Award className="h-4 w-4" />
+            <span className="hidden sm:inline">Referral Links Manager</span>
+            <span className="sm:hidden">Manager</span>
           </TabsTrigger>
         </TabsList>
 
+        {/* Section One: Share Your Referral Link */}
         <TabsContent value="share" className="space-y-6 animate-fade-in">
-          {/* Share Referral Link - Main focus at top of share tab */}
           <ReferralSharePanel isDemoMode={shouldUseDemoData} />
         </TabsContent>
 
-        <TabsContent value="mint" className="space-y-6 animate-fade-in">
+        {/* Section Two: ENS Subdomain Community */}
+        <TabsContent value="community" className="space-y-6 animate-fade-in">
           <SubnameMinting />
+          <RewardsPanel />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6 animate-fade-in">
+        {/* Section Three: ENS Subdomain Communities Dashboard */}
+        <TabsContent value="dashboard" className="space-y-6 animate-fade-in">
           <ReferralAnalytics />
+          
+          {/* Recent Referrals Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Referrals</CardTitle>
+              <CardDescription>
+                Track the status of your recent referral codes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {referrals.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No referrals yet. Generate your first referral code in the manager!
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {referrals.slice(0, 5).map((referral) => (
+                    <div key={referral.id} className="flex items-center justify-between p-3 border rounded-lg hover-scale">
+                      <div>
+                        <p className="font-medium">Ref: {referral.referral_code}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {referral.referred_email || 'Pending email'}
+                        </p>
+                      </div>
+                      <Badge 
+                        variant={
+                          referral.status === 'verified' 
+                            ? 'default' 
+                            : referral.status === 'rewarded' 
+                            ? 'secondary' 
+                            : 'outline'
+                        }
+                      >
+                        {referral.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        <TabsContent value="referrals" className="space-y-6 animate-fade-in">
+        {/* Section Four: Referral Links Manager */}
+        <TabsContent value="manager" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Referral Actions */}
             <Card>
@@ -483,12 +523,12 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
             </Card>
           </div>
 
-          {/* Recent Referrals */}
+          {/* All Referrals Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Referrals</CardTitle>
+              <CardTitle>All Referral Links</CardTitle>
               <CardDescription>
-                Track the status of your recent referral codes
+                Manage and track all your referral codes
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -498,43 +538,43 @@ export const Dashboard = ({ isDemoMode = false }: DashboardProps) => {
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {referrals.slice(0, 10).map((referral) => (
-                    <div key={referral.id} className="flex items-center justify-between p-3 border rounded-lg hover-scale">
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          <p className="font-medium">{referral.referral_code}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {referral.referred_email || 'Pending signup'}
-                          </p>
+                  {referrals.map((referral) => (
+                    <div key={referral.id} className="flex items-center justify-between p-4 border rounded-lg hover-scale">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <code className="px-2 py-1 bg-muted rounded text-sm font-mono">
+                            {referral.referral_code}
+                          </code>
+                          <Badge 
+                            variant={
+                              referral.status === 'verified' 
+                                ? 'default' 
+                                : referral.status === 'rewarded' 
+                                ? 'secondary' 
+                                : 'outline'
+                            }
+                          >
+                            {referral.status}
+                          </Badge>
+                        </div>
+                        <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>{referral.referred_email || 'No email provided'}</span>
+                          <span>{new Date(referral.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge 
-                          variant={
-                            referral.status === 'rewarded' ? 'default' :
-                            referral.status === 'verified' ? 'secondary' : 'outline'
-                          }
-                        >
-                          {referral.status}
-                        </Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyReferralCode(referral.referral_code)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyReferralCode(referral.referral_code)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="rewards" className="space-y-6 animate-fade-in">
-          <RewardsPanel />
         </TabsContent>
       </Tabs>
     </div>
