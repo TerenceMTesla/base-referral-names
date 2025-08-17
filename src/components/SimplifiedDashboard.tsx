@@ -2,7 +2,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Gift, Award, Copy, TrendingUp, RefreshCw, Share, Coins, Image } from 'lucide-react';
+import { Users, Gift, Award, Copy, TrendingUp, RefreshCw, Share, Coins, Image, Settings } from 'lucide-react';
 import { useOptimizedDashboard } from '@/hooks/useOptimizedDashboard';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ErrorDisplay } from '@/components/ui/error-boundary';
@@ -13,6 +13,7 @@ import { ENSLogo } from '@/components/ENSLogo';
 const LazyReferralSharePanel = lazy(() => import('@/components/ReferralSharePanel').then(m => ({ default: m.ReferralSharePanel })));
 const LazySubnameMinting = lazy(() => import('@/components/SubnameMinting').then(m => ({ default: m.SubnameMinting })));
 const LazyRewardsPanel = lazy(() => import('@/components/RewardsPanel').then(m => ({ default: m.RewardsPanel })));
+const LazyReferralLinksManager = lazy(() => import('@/components/ReferralLinksManager').then(m => ({ default: m.ReferralLinksManager })));
 
 // Import QuickAnalytics directly instead of lazy loading to avoid import errors
 import { QuickAnalytics } from './QuickAnalytics';
@@ -60,30 +61,22 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
         <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm">
           <div className="container mx-auto px-4 py-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-6 bg-muted/50 p-1 rounded-xl">
+              <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl">
                 <TabsTrigger value="share" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">
                   <Share className="h-4 w-4" />
-                  <span className="hidden sm:inline">Share</span>
+                  <span className="hidden sm:inline">Share Your Referral Link</span>
                 </TabsTrigger>
-                <TabsTrigger value="earn" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-lg">
-                  <Coins className="h-4 w-4" />
-                  <span className="hidden sm:inline">Earn</span>
-                </TabsTrigger>
-                <TabsTrigger value="mint" className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground rounded-lg">
-                  <Award className="h-4 w-4" />
-                  <span className="hidden sm:inline">Mint NFTs</span>
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="hidden sm:inline">Analytics</span>
-                </TabsTrigger>
-                <TabsTrigger value="referrals" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-lg">
+                <TabsTrigger value="community" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-lg">
                   <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">Referrals</span>
+                  <span className="hidden sm:inline">ENS Subdomain Community</span>
                 </TabsTrigger>
-                <TabsTrigger value="rewards" className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground rounded-lg">
-                  <Gift className="h-4 w-4" />
-                  <span className="hidden sm:inline">Rewards</span>
+                <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground rounded-lg">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="hidden sm:inline">Communities Dashboard</span>
+                </TabsTrigger>
+                <TabsTrigger value="manager" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Referral Links Manager</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -170,9 +163,10 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
           </Card>
         </div>
 
-        {/* Tab Content - No need to scroll past header */}
+        {/* Tab Content - 4 Section Flow */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsContent value="share" className="animate-fade-in">
+          {/* Section One: Share Your Referral Link */}
+          <TabsContent value="share" className="space-y-4 animate-fade-in">
             <Card className="card-primary border-primary/30 bg-gradient-to-br from-primary/20 to-primary/10">
               <CardHeader>
                 <CardTitle className="text-xl text-primary flex items-center gap-2">
@@ -189,9 +183,8 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
                 </Suspense>
               </CardContent>
             </Card>
-          </TabsContent>
 
-          <TabsContent value="earn" className="space-y-4 animate-fade-in">
+            {/* How to Earn Guide within Share section */}
             <Card className="card-hover border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2 text-accent">
@@ -227,21 +220,55 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
             </Card>
           </TabsContent>
 
-          <TabsContent value="mint" className="animate-fade-in">
+          {/* Section Two: ENS Subdomain Community */}
+          <TabsContent value="community" className="space-y-4 animate-fade-in">
+            <Card className="card-hover border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
+              <CardHeader>
+                <CardTitle className="text-xl text-accent flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  ENS Subdomain Community
+                </CardTitle>
+                <CardDescription className="text-accent/80">
+                  Mint subname NFTs and manage your rewards
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Subname Minting */}
             <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl p-6 border border-secondary/30">
               <Suspense fallback={<TabLoadingSpinner />}>
                 <LazySubnameMinting isDemoMode={isDemoMode} />
               </Suspense>
             </div>
-          </TabsContent>
 
-          <TabsContent value="analytics" className="animate-fade-in">
-            <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-6 border border-primary/30">
-              <QuickAnalytics isDemoMode={isDemoMode} />
+            {/* Rewards Panel */}
+            <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl p-6 border border-secondary/30">
+              <Suspense fallback={<TabLoadingSpinner />}>
+                <LazyRewardsPanel isDemoMode={isDemoMode} />
+              </Suspense>
             </div>
           </TabsContent>
 
-          <TabsContent value="referrals" className="space-y-4 animate-fade-in">
+          {/* Section Three: ENS Subdomain Communities Dashboard */}
+          <TabsContent value="dashboard" className="space-y-4 animate-fade-in">
+            <Card className="card-hover border-secondary/30 bg-gradient-to-br from-secondary/20 to-secondary/10">
+              <CardHeader>
+                <CardTitle className="text-xl text-secondary flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  ENS Subdomain Communities Dashboard
+                </CardTitle>
+                <CardDescription className="text-secondary/80">
+                  Analytics and recent referral activity
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Analytics */}
+            <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-6 border border-primary/30">
+              <QuickAnalytics isDemoMode={isDemoMode} />
+            </div>
+
+            {/* Recent Referrals */}
             <Card className="card-hover border-accent/30 bg-gradient-to-br from-accent/20 to-accent/10">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2 text-accent">
@@ -291,12 +318,24 @@ export const SimplifiedDashboard = ({ isDemoMode = false }: SimplifiedDashboardP
             </Card>
           </TabsContent>
 
-          <TabsContent value="rewards" className="animate-fade-in">
-            <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl p-6 border border-secondary/30">
-              <Suspense fallback={<TabLoadingSpinner />}>
-                <LazyRewardsPanel isDemoMode={isDemoMode} />
-              </Suspense>
-            </div>
+          {/* Section Four: Referral Links Manager */}
+          <TabsContent value="manager" className="animate-fade-in">
+            <Card className="card-hover border-primary/30 bg-gradient-to-br from-primary/20 to-primary/10">
+              <CardHeader>
+                <CardTitle className="text-xl text-primary flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Referral Links Manager
+                </CardTitle>
+                <CardDescription className="text-primary/80">
+                  Create, manage and track your referral campaigns
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <Suspense fallback={<TabLoadingSpinner />}>
+                  <LazyReferralLinksManager isDemoMode={isDemoMode} />
+                </Suspense>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
