@@ -112,17 +112,18 @@ export const useAuth = () => {
   useEffect(() => {
     // Handle Dynamic user authentication separately
     const handleAuthState = async () => {
-      if (user && !session && !loading) {
+      if (user && !session) {
+        console.log('Dynamic user authenticated, creating Supabase session...', user.userId);
         setLoading(true);
         try {
           await authenticateWithDynamic(user);
         } catch (error) {
           console.error('Authentication failed:', error);
-        } finally {
           setLoading(false);
         }
       } else if (!user && session) {
         // User logged out from Dynamic but still has Supabase session
+        console.log('User logged out, clearing session...');
         await supabase.auth.signOut();
         setProfile(null);
         setSession(null);
@@ -133,7 +134,7 @@ export const useAuth = () => {
     };
 
     handleAuthState();
-  }, [user]);
+  }, [user, session]);
 
   return {
     user,
