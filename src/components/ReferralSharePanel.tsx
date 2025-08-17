@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { AnimatedCounter } from './AnimatedCounter';
 import { AchievementBadge } from './AchievementBadge';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
+import { ENSSubdomainReferralPanel } from './ENSSubdomainReferralPanel';
 
 interface ReferralSharePanelProps {
   isDemoMode?: boolean;
@@ -28,6 +29,9 @@ export const ReferralSharePanel = ({ isDemoMode = false }: ReferralSharePanelPro
 
   return (
     <div className="space-y-6">
+      {/* ENS Subdomain Community Panel */}
+      <ENSSubdomainReferralPanel isDemoMode={isDemoMode} />
+      
       {/* Live Stats Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="card-hover animate-fade-in">

@@ -34,3 +34,6 @@ enable_signup = true
 
 [functions.dynamic-auth]
 verify_jwt = false
+
+[functions.check-ens-domain]
+verify_jwt = false
