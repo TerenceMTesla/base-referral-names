@@ -1,11 +1,10 @@
 import { createRoot } from 'react-dom/client'
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
+import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 import App from './App.tsx'
 import './index.css'
 
-// You need to replace this with your own Dynamic Labs environment ID
-// Get it from: https://app.dynamic.xyz/dashboard/developer
-const DYNAMIC_ENVIRONMENT_ID = "fe84593e-fefc-4303-aed9-099ee46cf8a9";
+const DYNAMIC_ENVIRONMENT_ID = "1e1d5fb2-1fec-43b3-a497-04cfb4e7427f";
 
 // Enhanced error handling for Dynamic SDK
 const handleDynamicError = (error: any) => {
@@ -27,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
   <DynamicContextProvider
     settings={{
       environmentId: DYNAMIC_ENVIRONMENT_ID,
+      walletConnectors: [EthereumWalletConnectors],
       appLogoUrl: '/favicon.ico',
       appName: 'ENS Referrals',
       privacyPolicyUrl: '/privacy',

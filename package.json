@@ -11,7 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dynamic-labs/ethereum": "^4.27.0",
     "@dynamic-labs/sdk-react-core": "^4.27.0",
+    "@dynamic-labs/wagmi-connector": "^4.27.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -61,6 +63,8 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
+    "viem": "^2.33.3",
+    "wagmi": "^2.16.3",
     "zod": "^3.25.76",
     "zustand": "^5.0.7"
   },
